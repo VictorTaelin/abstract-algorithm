@@ -1,0 +1,28 @@
+{
+  "name": "interaction-combinators",
+  "version": "0.1.0",
+  "description": "Interaction combinators (with, optionally, infinite node types).",
+  "main": "interaction-combinators.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maiavictor/interaction-combinators.git"
+  },
+  "keywords": [
+    "functional-programming",
+    "interaction-combinators",
+    "lambda-calculus",
+    "interaction-nets"
+  ],
+  "author": "MaiaVictor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maiavictor/interaction-combinators/issues"
+  },
+  "homepage": "https://github.com/maiavictor/interaction-combinators#readme",
+  "dependencies": {
+    "lambda-calculus": "^1.0.1"
+  }
+}
