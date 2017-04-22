@@ -3,42 +3,36 @@ var com = require("./interaction-combinators.js");
 module.exports = (function(){
   // Wire -> String
   function toSource(wire){
+    var alphabet = "abcdefghijklmnopqrstuvwxyz";
     var wireName = (function(){
       var next = 0;
       var name = {};
       function genName(){
-        var alphabet 
-          = "abcdefghijklmnopqrstuvwxyz"
-          + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-          + "0123456789";
         var base = alphabet.length;
-        return (function go(id){
-          return id < base ? "" : alphabet[id%base] + go(~~(id / base));
-        })((next++)+alphabet.length);
+        var name = "";
+        for (var n = ++next; n > 0; n = Math.floor((n - 1) / base))
+          name += alphabet[(n - 1) % base];
+        return name;
       };
       return function(next){
         var prev = com.reverse(next);
         if (next.port === prev.port && next.node === prev.node)
           return "@";
-        var ai = next.node.id*3 + next.port;
-        var bi = prev.node.id*3 + prev.port;
+        var ai = next.node.id * 3 + next.port;
+        var bi = prev.node.id * 3 + prev.port;
         var pairId = ai < bi ? ai+":"+bi : bi+":"+ai;
         return name[pairId] = name[pairId] || genName();
       };
     })();
     function buildTree(wire){
       function wrap(n, str){
-        return n < 4 ? str :
-          ( n % 4 === 0 ? "("+wrap(~~(n/4), str)+")"
-          : n % 4 === 1 ? "["+wrap(~~(n/4), str)+"]"
-          : n % 4 === 2 ? "{"+wrap(~~(n/4), str)+"}"
-          : n % 4 === 3 ? "<"+wrap(~~(n/4), str)+">" : "?");
+        return "(" + alphabet[n % alphabet.length].toUpperCase() + " " + str + ")";
       };
       var treeCode = (function go(wire){
         return wire.port !== 0 
           ? wireName(wire) 
-          : wrap(wire.node.k+4,
-              go(wire.node.b)+" "+
+          : wrap(wire.node.k,
+              go(wire.node.b) + " " +
               go(wire.node.c));
       })(wire);
       return wireName(wire)+":"+treeCode;
@@ -86,22 +80,20 @@ module.exports = (function(){
     };
     function parseNode(upWire){
       var chr = source[idx];
-      var kind 
-        = chr === "(" ? 0
-        : chr === "[" ? 1
-        : chr === "{" ? 2 
-        : chr === "<" ? 3
-        : -1;
-      if (kind === -1){
-        buildPort(parseName(), upWire);
-      } else {
-        var nodeA = com.node(kind);    skip();
+      if (chr === "(") {
+        skip();
+        for (var kind = 0; /[A-Z]/.test(source[idx]); skip())
+          kind = kind * 26 + source[idx].charCodeAt(0) - 65;
+        //console.log(kind);
+        var nodeA = com.node(kind); skip();
         var nodeB = parseNode(nodeA.b); skip();
         var nodeC = parseNode(nodeA.c); skip();
         if (nodeB) com.link(nodeA.b, nodeB.a);
         if (nodeC) com.link(nodeA.c, nodeC.a);
         return nodeA;
-      };
+      } else {
+        buildPort(parseName(), upWire);
+      }
     };
     function parseLine(){
       skipWhite();
