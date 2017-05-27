@@ -1,134 +1,102 @@
 // Interaction combinators with infinite node types
+
 module.exports = (function(){
-  // type Color = Nat
-  // data Port  = 0 | 1 | 2
-  // data Wire  = Wire Node Port
-  // data Node  = Node Color Wire Wire Wire
-  var nextId = 0;
+  function wire(mem, node, port) {
+    return (node << 2) | (port + 1);
+  }
+  function flip(mem, w) {
+    return wire(mem, NODE(mem, w), PORT(mem, w));
+  }
+  function NODE(mem, w) {
+    return mem[w >>> 2][(w & 3) - 1] >>> 2;
+  }
+  function PORT(mem, w) {
+    return (mem[w >>> 2][(w & 3) - 1] & 3) - 1;
+  }
 
-  // Node, Port -> Wire
-  function Wire(node, port){
-    this.id = ++nextId;
-    this.node = node;
-    this.port = port;
-  };
-  function wire(node, port){
-    return {
-      id: ++nextId,
-      node: node,
-      port: port};
-  };
+  function node(mem, kind) {
+    var id = mem.length << 2;
+    mem.push([id + 1, id + 2, id + 3, kind << 3]);
+    return mem.length - 1;
+  }
+  function kind(mem, node) {
+    return (mem[node][3] >>> 3);
+  }
+  function exit(mem, node) {
+    return (mem[node][3] >>> 1) & 3;
+  }
+  function used(mem, node) {
+    return mem[node][3] & 1;
+  }
+  function setExit(mem, node, exit) {
+    return mem[node][3] = mem[node][3] & 0xFFFFFFF9 | (exit << 1);
+  }
+  function setUsed(mem, node) {
+    return mem[node][3] = mem[node][3] | 1;
+  }
+  function link(mem, a, b) {
+    mem[a>>>2][(a&3)-1] = b;
+    mem[b>>>2][(b&3)-1] = a;
+  }
 
-  // Color -> Node
-  function Node(color){
-    this.id = ++nextId;
-    this.k = color;
-    this.a = wire(this, 0);
-    this.b = wire(this, 1);
-    this.c = wire(this, 2);
-  };
-  function node(color){
-    return new Node(color);
-  };
-
-  // Node, Port -> Wire
-  function port(node, port){
-    switch (port){
-      case 0: return node.a;
-      case 1: return node.b;
-      case 2: return node.c;
-    };
-  };
-
-  // Wire -> Maybe Wire
-  function reverse(wire){
-    return port(wire.node, wire.port);
-  };
-
-  // Wire, Wire -> ()
-  function link(a, b){
-    var nodeA = a.node, portA = a.port;
-    var nodeB = b.node, portB = b.port;
-    port(nodeA, portA).node = nodeB;
-    port(nodeA, portA).port = portB;
-    port(nodeB, portB).node = nodeA;
-    port(nodeB, portB).port = portA;
-  };
-
-  // Node*, Node* -> ()
-  function rewrite(x, y){
-    function eraseWire(wire){
-      var back = reverse(wire);
-      if (port(back) === wire)
-        link(back, back);
-    };
-    function eraseNode(node){
-      eraseWire(port(node, 0));
-      eraseWire(port(node, 1));
-      eraseWire(port(node, 2));
-    };
-    if (x.k === y.k){
-      link(x.b, y.b);
-      link(x.c, y.c);
+  function rewrite(mem, x, y) {
+    if (kind(mem,x) === kind(mem,y)){
+      link(mem,flip(mem,wire(mem,x,1)), flip(mem,wire(mem,y,1)));
+      link(mem,flip(mem,wire(mem,x,2)), flip(mem,wire(mem,y,2)));
     } else {
-      var x1 = new Node(x.k);
-      var x2 = new Node(x.k);
-      var y1 = new Node(y.k);
-      var y2 = new Node(y.k);
-      link(y1.a, x.b);
-      link(y2.a, x.c);
-      link(x1.a, y.b);
-      link(x2.a, y.c);
-      link(x1.b, y1.b);
-      link(x1.c, y2.b);
-      link(x2.b, y1.c);
-      link(x2.c, y2.c);
-    };
-    eraseNode(x);
-    eraseNode(y);
-  };
+      var x1 = node(mem,kind(mem,x)), x2 = node(mem,kind(mem,x));
+      var y1 = node(mem,kind(mem,y)), y2 = node(mem,kind(mem,y));
+      link(mem,flip(mem,wire(mem,y1,0)), flip(mem,wire(mem,x,1)));
+      link(mem,flip(mem,wire(mem,y2,0)), flip(mem,wire(mem,x,2)));
+      link(mem,flip(mem,wire(mem,x1,0)), flip(mem,wire(mem,y,1)));
+      link(mem,flip(mem,wire(mem,x2,0)), flip(mem,wire(mem,y,2)));
+      link(mem,flip(mem,wire(mem,x1,1)), flip(mem,wire(mem,y1,1)));
+      link(mem,flip(mem,wire(mem,x1,2)), flip(mem,wire(mem,y2,1)));
+      link(mem,flip(mem,wire(mem,x2,1)), flip(mem,wire(mem,y1,2)));
+      link(mem,flip(mem,wire(mem,x2,2)), flip(mem,wire(mem,y2,2)));
+    }
+  }
 
-  // *Wire -> Stats
-  function reduce(wire){
-    var stats = {steps: 0, rewrites: 0, time: Date.now()}; 
-    var solid = {};
-    var exits = {};
-    (function move(prev){
-      var next = reverse(prev);
-      while (next !== undefined){
-        var prev = reverse(next);
-        ++stats.steps;
-        if (solid[next.node.id]) 
-          return;
-        if (next.port === 0){
-          if (prev.port === 0 && !(prev.node === next.node)){ 
-            ++stats.rewrites;
-            next = reverse(port(prev.node, exits[prev.node.id]));
-            rewrite(prev.node, reverse(prev).node);
-          } else {
-            solid[next.node.id] = true;
-            move(reverse(next.node.c));
-            move(reverse(next.node.b));
-            return;
-          };
+  function reduce(net) {
+    var mem = net.mem;
+    var steps = 0;
+    var visit = [net.ref];
+    var prev, next;
+    while (next || visit.length > 0) {
+      ++steps;
+      if (!next) {
+        prev = visit.pop();
+        next = flip(mem,prev);
+      }
+      prev = flip(mem,next);
+      if (used(mem,NODE(mem,next)))  {
+        next = null;
+      } else if (PORT(mem,next) === 0){
+        if (PORT(mem,prev) === 0 && !(NODE(mem,prev) === NODE(mem,next))){ 
+          next = flip(mem,wire(mem,NODE(mem,prev), exit(mem,NODE(mem,prev))));
+          rewrite(mem,NODE(mem,prev), NODE(mem,flip(mem,prev)));
         } else {
-          exits[next.node.id] = next.port;
-          next = next.node.a;
+          setUsed(mem,NODE(mem,next));
+          visit.push(mem,flip(mem,wire(mem,NODE(mem,next),2)));
+          visit.push(mem,flip(mem,wire(mem,NODE(mem,next),1)));
+          next = null;
         };
-      };
-    })(wire);
-    link(wire, wire);
-    stats.time = (Date.now()-stats.time)/1000;
-    return wire;
-  };
+      } else {
+        setExit(mem,NODE(mem,next), PORT(mem,next));
+        next = wire(mem,NODE(mem,next),0);
+      }
+    }
+    return net;
+  }
 
   return {
-    Node: Node,
     reduce: reduce,
-    reverse: reverse,
     link: link,
-    wire: wire,
+    NODE: NODE,
+    PORT: PORT,
     node: node,
-    port: port,
+    kind: kind,
+    wire: wire,
+    flip: flip
   };
 })();

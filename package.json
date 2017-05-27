@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/maiavictor/interaction-combinators#readme",
   "dependencies": {
-    "lambda-calculus": "^1.0.1"
+    "lambda-calculus": "^1.0.2"
   }
 }
