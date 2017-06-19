@@ -1,8 +1,8 @@
 {
-  "name": "interaction-combinators",
-  "version": "0.1.0",
-  "description": "Interaction combinators (with, optionally, infinite node types).",
-  "main": "interaction-combinators.js",
+  "name": "abstract-algorithm",
+  "version": "0.1.1",
+  "description": "Abstract-algorithm for optional reduction of stratifiable lambda terms",
+  "main": "api.js",
   "scripts": {
     "test": "node test.js"
   },
@@ -12,16 +12,16 @@
   },
   "keywords": [
     "functional-programming",
-    "interaction-combinators",
     "lambda-calculus",
+    "interaction-combinators",
     "interaction-nets"
   ],
   "author": "MaiaVictor",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/maiavictor/interaction-combinators/issues"
+    "url": "https://github.com/maiavictor/abstract-algorithm/issues"
   },
-  "homepage": "https://github.com/maiavictor/interaction-combinators#readme",
+  "homepage": "https://github.com/maiavictor/abstract-algorithm#readme",
   "dependencies": {
     "lambda-calculus": "^1.0.2"
   }

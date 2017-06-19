@@ -1,55 +1,66 @@
 // Encode/decode λ-terms to/from interaction nets
 
-var lc  = require("lambda-calculus");
-var com = require("./interaction-combinators.js");
+var L = require("lambda-calculus");
+var A = require("./abstract-net.js");
 module.exports = {
-  encode: function(term){
-    var nextkind = 0;
-    var mem = [];
-    return {mem: mem, ref: (function encode(term, scope){
+  encode: (term) => {
+    var kind = 1;
+    var m = [];
+    return {mem: m, ref: (function encode(term, scope){
       switch (term.type){
-        case lc.LAM: 
-          var fun = com.node(mem,0);
-          var era = com.node(mem,65535);
-          com.link(mem,com.flip(mem,com.wire(mem,fun,1)), com.flip(mem,com.wire(mem,era,0)));
-          com.link(mem,com.flip(mem,com.wire(mem,era,1)), com.flip(mem,com.wire(mem,era,2)));
+        case L.LAM: 
+          var fun = A.Node(m,1);
+          var era = A.Node(m,0);
+          A.link(m, A.Wire(fun,1), A.Wire(era,0));
+          A.link(m, A.Wire(era,1), A.Wire(era,2));
           var bod = encode(term.body, [fun].concat(scope));
-          com.link(mem,com.flip(mem,com.wire(mem,fun,2)), bod);
-          return com.wire(mem,fun,0);
-        case lc.APP:
-          var app = com.node(mem,0);
-          var fun = encode(term.left , scope);
-          com.link(mem,com.flip(mem,com.wire(mem,app,0)), fun);
+          A.link(m, A.Wire(fun,2), bod);
+          return A.Wire(fun,0);
+        case L.APP:
+          var app = A.Node(m,1);
+          var fun = encode(term.left, scope);
+          A.link(m, A.Wire(app,0), fun);
           var arg = encode(term.right, scope);
-          com.link(mem,com.flip(mem,com.wire(mem,app,1)), arg);
-          return com.wire(mem,app,2);
-        case lc.VAR:
+          A.link(m, A.Wire(app,1), arg);
+          return A.Wire(app,2);
+        case L.VAR:
           var lam = scope[term.index];
-          if (com.kind(mem,com.NODE(mem,com.wire(mem,lam,1))) === 65535) {
-            return com.wire(mem,lam,1);
+          if (A.kind(m,A.node(A.flip(m,A.Wire(lam,1)))) === 0) {
+            return A.Wire(lam,1);
           } else {
-            var dup = com.node(mem,++nextkind);
-            var arg = com.wire(mem,com.NODE(mem,com.wire(mem,lam,1)), com.PORT(mem,com.wire(mem,lam,1)));
-            com.link(mem,com.flip(mem,com.wire(mem,dup,1)), com.flip(mem,com.wire(mem,lam,1)));
-            com.link(mem,com.flip(mem,com.wire(mem,dup,0)), com.wire(mem,lam, 1));
-            return com.wire(mem,dup,2);
+            var dup = A.Node(m, ++kind);
+            var arg = A.flip(m, A.Wire(lam,1));
+            A.link(m,A.Wire(dup,1), A.flip(m,A.Wire(lam,1)));
+            A.link(m,A.Wire(dup,0), A.Wire(lam,1));
+            return A.Wire(dup,2);
           }
       };
     })(term, [])};
   },
-  decode: function(net){
-    var mem = net.mem;
+  decode: (net) => {
     var nodeDepth = {};
-    return (function go(wire, exit, depth){
-      return com.kind(mem,com.NODE(mem,wire)) === 0
-        ? ( com.PORT(mem,wire) === 0 ? lc.Lam(go(com.wire(mem,com.NODE(mem,wire),2), exit, (nodeDepth[com.NODE(mem,wire)]=depth)+1))
-          : com.PORT(mem,wire) === 1 ? lc.Var(depth - nodeDepth[com.NODE(mem,wire)] - 1)
-          : lc.App(
-            go(com.wire(mem,com.NODE(mem,wire),0), exit, depth),
-            go(com.wire(mem,com.NODE(mem,wire),1), exit, depth)))
-        :   go(com.wire(mem,com.NODE(mem,wire), com.PORT(mem,wire) > 0 ? 0 : exit.head),
-            com.PORT(mem,wire) > 0 ? {head: com.PORT(mem,wire), tail: exit} : exit.tail,
-            depth)
+    return (function go(next, exit, depth){
+      var prev = A.flip(net.mem, next);
+      var prevPort = A.port(prev);
+      var prevNode = A.node(prev);
+      if (A.kind(net.mem, prevNode) === 1) {
+        switch (prevPort) {
+          case 0:
+            nodeDepth[prevNode] = depth;
+            return L.Lam(go(A.Wire(prevNode,2), exit, depth +1 ));
+          case 1:
+            return L.Var(depth - nodeDepth[prevNode] - 1);
+          case 2:
+            return L.App(
+              go(A.Wire(prevNode,0), exit, depth),
+              go(A.Wire(prevNode,1), exit, depth));
+        }
+      } else {
+        return go(
+          A.Wire(prevNode, prevPort > 0 ? 0 : exit.head),
+          prevPort > 0 ? {head: prevPort, tail: exit} : exit.tail,
+          depth);
+      }
     })(net.ref, null, 0);
   }
 }

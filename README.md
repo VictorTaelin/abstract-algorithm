@@ -1,3 +1,3 @@
-## Interaction Combinators
+# Lamping's Abstract Algorithm
 
-Interaction combinators with infinite node types. See [the old repo](https://github.com/maiavictor/optlam) for more info.
+Reduces stratifiable lambda-calculus terms optimally.
