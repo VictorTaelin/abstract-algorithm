@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/maiavictor/abstract-algorithm#readme",
   "dependencies": {
-    "lambda-calculus": "^1.0.2"
+    "lambda-calculus": "^1.0.3"
   }
 }
