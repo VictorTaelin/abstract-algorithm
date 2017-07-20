@@ -1,26 +1,34 @@
-const L = require("./../lambda-calculus");
-const N = require("./abstract-net.js");
-const E = require("./lambda-encoding.js");
+var L = require("./../lambda-calculus");
+var G = require("./sharing-graph.js");
+var E = require("./lambda-encoder.js");
 
 // String -> Net
 // Converts a lambda-calculus string to an interaction net
-const lamToNet = lam => E.encode(L.fromString(lam));
+function lamToNet(lam) {
+  return E.encode(L.fromString(lam));
+}
 
 // Net -> String
 // Converts an interaction net to a lambda-calculus string
-const netToLam = net => L.toString(E.decode(net));
+function netToLam(net) {
+  return L.toString(E.decode(net));
+}
 
 // Net -> Net
 // Reduces net to normal form
-const reduceNet = N.reduce;
+var reduceNet = G.reduce;
 
 // String -> String
 // Reduces a lambda-calculus string to normal form (naively)
-const reduceNaive = lam => L.toString(L.reduce(L.fromString(lam)));
+function reduceNaive(lam) {
+  return L.toString(L.reduce(L.fromString(lam)));
+}
 
 // String -> String
 // Reduces a lambda-calculus string to normal form (optimally)
-const reduceOptimal = lam => netToLam(reduceNet(lamToNet(lam)));
+function reduceOptimal(lam) {
+  return netToLam(reduceNet(lamToNet(lam)));
+}
 
 module.exports = {
   lamToNet,
