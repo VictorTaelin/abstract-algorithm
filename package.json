@@ -1,8 +1,8 @@
 {
   "name": "abstract-algorithm",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Abstract-algorithm for optional reduction of stratifiable lambda terms",
-  "main": "api.js",
+  "main": "src/api.js",
   "scripts": {
     "test": "node test.js"
   },

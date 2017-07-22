@@ -45,7 +45,7 @@ const code = () => {
   };
   const S = "$S";
 
-  return `
+  console.log(`
     (module
       (func $log (import "imports" "log") (param i32) (param i32) (param i32) (param i32))
       (memory (export "mem") 10000)
@@ -119,7 +119,7 @@ const code = () => {
         ${log(get(S))}
         ${get(M)}
       )
-      (export "reduce" (func $reduce)))`;
+      (export "reduce" (func $reduce)))`);
 };
 
 //console.log(code(),"\n\n\n\n");

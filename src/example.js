@@ -1,5 +1,8 @@
 var Api = require("./api.js");
 
+// This λ-calculus term implements a minimalist cryptographic hash function
+// using a 3-symbol block cellular automata. We then test it by computing the
+// (6^5)th interation of a small initial state.
 var test = `
   0= s.z.z
   1= s.z.(s z)
@@ -12,16 +15,6 @@ var test = `
   8= s.z.(s (s (s (s (s (s (s (s z))))))))
   9= s.z.(s (s (s (s (s (s (s (s (s z)))))))))
   10= s.z.(s (s (s (s (s (s (s (s (s (s z))))))))))
-  11= s.z.(s (s (s (s (s (s (s (s (s (s (s z)))))))))))
-  12= s.z.(s (s (s (s (s (s (s (s (s (s (s (s z))))))))))))
-  13= s.z.(s (s (s (s (s (s (s (s (s (s (s (s (s z)))))))))))))
-  14= s.z.(s (s (s (s (s (s (s (s (s (s (s (s (s (s z))))))))))))))
-  15= s.z.(s (s (s (s (s (s (s (s (s (s (s (s (s (s (s z)))))))))))))))
-  16= s.z.(s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s z))))))))))))))))
-  17= s.z.(s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s z)))))))))))))))))
-  18= s.z.(s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s z))))))))))))))))))
-  19= s.z.(s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s z)))))))))))))))))))
-  20= s.z.(s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s (s z))))))))))))))))))))
 
   A= a.b.c.a
   B= a.b.c.b
@@ -39,13 +32,13 @@ var test = `
 
   space= t.(t A A B C A B B C A B C C A A B C)
 
-  t.(t (3 2) (5 6 tick space))
+  (5 6 tick space)
 `;
 
 var a = Api.lamToNet(test);
-console.log(JSON.stringify(a));
+console.log("Input:");
 console.log(Api.netToLam(a));
 
 var b = Api.reduceNet(a);
-console.log(JSON.stringify(b));
+console.log("Output:");
 console.log(Api.netToLam(b));

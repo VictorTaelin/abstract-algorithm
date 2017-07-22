@@ -1,6 +1,9 @@
-var L = require("./../lambda-calculus");
-var G = require("./sharing-graph.js");
+// High-level API, you'd probably use this in practice
+
+var L = require("lambda-calculus");
+var A = require("./abstract-algorithm.js");
 var E = require("./lambda-encoder.js");
+var F = require("./fast-reducer.js");
 
 // String -> Net
 // Converts a lambda-calculus string to an interaction net
@@ -16,7 +19,7 @@ function netToLam(net) {
 
 // Net -> Net
 // Reduces net to normal form
-var reduceNet = G.reduce;
+var reduceNet = F.reduce;
 
 // String -> String
 // Reduces a lambda-calculus string to normal form (naively)

@@ -1,43 +1,5 @@
-// Interaction combinators with infinite node types
-
-function Wire(node, port) {
-  return (node << 2) | port;
-}
-
-function node(wire) {
-  return wire >>> 2;
-}
-
-function port(wire) {
-  return wire & 3;
-}
-
-function flip(mem, w) {
-  return mem[w];
-}
-
-function Node(mem, kind) {
-  var node = mem.length / 4;
-  mem.push(Wire(node,0), Wire(node,1), Wire(node,2), kind << 2);
-  return node;
-}
-
-function kind(mem, node) {
-  return mem[node * 4 + 3] >>> 2;
-}
-
-function exit(mem, node) {
-  return (mem[node * 4 + 3] >>> 0) & 3;
-}
-
-function setExit(mem, node, exit) {
-  return mem[node * 4 + 3] = mem[node * 4 + 3] & 0xFFFFFFFC | exit;
-}
-
-function link(mem, a, b) {
-  mem[a] = b;
-  mem[b] = a;
-}
+// This is fully inlined version of abstract-algorithm.js. It works directly
+// on arrays and performs garbage collection. It is much faster.
 
 function reduce(net) {
   var B, x, y, z, a, b, m, M, v, V, N, L;
@@ -119,12 +81,5 @@ function collect(net) {
 
 module.exports = {
   reduce: reduce,
-  collect: collect,
-  Node: Node,
-  link: link,
-  flip: flip,
-  kind: kind,
-  Wire: Wire,
-  node: node,
-  port: port
-};
+  collect: collect
+}
