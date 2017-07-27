@@ -5,7 +5,7 @@ var NAT = n => {
   return "s.z." + go(n);
 };
 
-var test = NAT => `
+var rule110 = NAT => `
   I= a.a
   T= a.b.a
   F= a.b.b
@@ -13,21 +13,19 @@ var test = NAT => `
   N= c.n.n
 
   rule110= a.(a
-    b.(b c.t.(t (c F T) T T) c.t.(t (c T F) T F))
-    b.(b c.t.(t (c T T) F T) c.t.(t (c T F) F F)))
+    b.(b c.t.(t a.b.(c b a) T T) c.t.(t c T F))
+    b.(b c.t.(t a.b.a       F T) c.t.(t c F F)))
 
-  next= a.(a
-    a.res.(res l.b.c.
-      (rule110 a b c x.a.b.res.
-        (res (C x l) a b)))
-    res.(res N T F)
-    l.b.c.(rule110 F b c x.a.b.(C x l)))
+  apply= rule.a.(a
+    a.r.(r l.b.c.(rule a b c x.a.b.r.(r (C x l) a b)))
+    r.(r N T F)
+    l.b.c.(rule F b c x.a.b.(C x l)))
 
-  (${NAT} next N)
+  (${NAT} (apply rule110) N)
 `;
 
 var show = automata => L.toFunction(L.fromString(automata))(a => b => a("1")("0") + b)("0");
 
-for (var i = 0; i < 100; ++i) {
-  console.log(show(A.reduceOptimal(test(NAT(i)))));
+for (var i = 1; i < 70; ++i) {
+  console.log(show(A.reduceOptimal(rule110(NAT(i)))));
 }

@@ -47,7 +47,6 @@ function link(mem, a, b) {
 function reduce(net, c) {
   let visit = [net.ptr];
   let prev, next, back;
-  var S = 0, R = 0, B = 0;
   while (visit.length > 0) {
     prev = visit.pop();
     next = flip(net.mem, prev);
