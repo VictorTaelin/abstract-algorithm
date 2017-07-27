@@ -1,4 +1,4 @@
-var Api = require("./api.js");
+var A = require("./api.js");
 
 // This λ-calculus term implements a minimalist cryptographic hash function
 // using a 3-symbol block cellular automata. We then test it by computing the
@@ -35,10 +35,4 @@ var test = `
   (5 6 tick space)
 `;
 
-var a = Api.lamToNet(test);
-console.log("Input:");
-console.log(Api.netToLam(a));
-
-var b = Api.reduceNet(a);
-console.log("Output:");
-console.log(Api.netToLam(b));
+console.log(A.reduceOptimal(test));

@@ -44,9 +44,10 @@ function link(mem, a, b) {
 // This walks through the graph looking for redexes, following the logical flow
 // of information, in such a way that only redexes that interfere on the normal
 // form are reduced. 
-function reduce(net) {
+function reduce(net, c) {
   let visit = [net.ptr];
   let prev, next, back;
+  var S = 0, R = 0, B = 0;
   while (visit.length > 0) {
     prev = visit.pop();
     next = flip(net.mem, prev);

@@ -10,6 +10,7 @@ function reduce(net) {
   L = M;
   v = [net.ptr];
   V = 1;
+  var R_ = 0, B_ = 0;
   while (V > 0) {
     V = V - 1;
     x = v[V];
@@ -18,10 +19,13 @@ function reduce(net) {
     if (m[x & B | 3] & 3 === 3)
       continue;
     if ((x & 3) === 0 && (y & 3) === 0 && (y & B) !== (x & B)) {
+      ++R_;
       z = m[y + (m[y & B | 3] & 3)];
       if ((m[y & B | 3] & B) === (m[x & B | 3] & B)) {
         a = m[y & B | 1]; b = m[x & B | 1]; m[a] = b; m[b] = a;
         a = m[y & B | 2]; b = m[x & B | 2]; m[a] = b; m[b] = a;
+        if ((m[x & B | 3] & B) === 4)
+          ++B_;
       } else {
         M += 16;
         m[M - 15] = M -  7;
@@ -53,6 +57,7 @@ function reduce(net) {
   }
   N.ptr = m[N.ptr];
   m[N.ptr] = N.ptr;
+  console.log(".",R_,B_);
   return collect(N);
 }
 
