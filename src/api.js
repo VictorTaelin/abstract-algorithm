@@ -19,7 +19,7 @@ function netToLam(net) {
 
 // Net -> Net
 // Reduces net to normal form
-var reduceNet = F.reduce;
+var reduceNet = A.reduce;
 
 // String -> String
 // Reduces a lambda-calculus string to normal form (naively)
