@@ -112,4 +112,5 @@ int main()
     memcpy(net.data, &init, sizeof(init));
     reduce(&net);
     printf("%d", checksum(&net));
+    free(net.data);
 }
