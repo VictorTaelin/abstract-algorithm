@@ -36,5 +36,6 @@ module.exports = `
   suc= n. s. z. (s (n s z))
   mul= a. b. s. z. (a (b s) z)
   exp= a. b. (b a)
+  sct= (r.n.(n p.s.z.(s (r r p s z)) s.z.z) r.n.(n p.s.z.(s (r r p s z)) s.z.z))
   U= x.(x x)
 `;
