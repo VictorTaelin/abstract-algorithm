@@ -15,10 +15,16 @@ A cleaned up adaptation of [Lamping's abstract algorithm](http://dl.acm.org/cita
 2. Use
 
     ```javascript
-    const A = require("abstract-algorithm");
-    const term = "(s.z.(s (s z)) s.z.(s (s z)))"; // church-encoded exponentiation of 2^2
-    const termNf = A.netToLam(A.reduceNet(A.lamToNet(term)));
-    console.log(termNf);
+    const algo = require("abstract-algorithm");
+
+    // church-encoded exponentiation of 2^2
+    const term = `
+      two: s.z.(s (s z))
+      (two two)
+    `;
+
+    // evaluates optimally
+    console.log(algo(term));
     ```
 
 ## Bla bla bla

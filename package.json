@@ -1,8 +1,8 @@
 {
   "name": "abstract-algorithm",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "Abstract-algorithm for optional reduction of stratifiable lambda terms",
-  "main": "src/api.js",
+  "main": "src/abstract-algorithm.js",
   "scripts": {
     "test": "node test.js"
   },
@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/maiavictor/abstract-algorithm#readme",
   "dependencies": {
-    "lambda-calculus": "^1.0.3"
+    "lambda-calculus": "^1.0.4"
   }
 }

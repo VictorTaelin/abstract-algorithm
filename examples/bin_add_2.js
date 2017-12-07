@@ -1,11 +1,10 @@
-var A = require("./..");
-var L = require("lambda-calculus");
-var Base = require("./base");
+var algo = require("./..");
+var base = require("./base");
 
 var test = `
-  ${Base}
+  ${base}
 
-  add= x.y.
+  add: x.y.
     (x. (x x)
       r.x.y.k.(x
         xs. (y
@@ -25,14 +24,14 @@ var test = `
       y
       a.b.b)
 
-  binSize= 32
-  binFold= x.a.b.c.(binSize r.x.(x x.f.(a (f x)) x.f.(b (f x)) f.c r) a.c x)
+  binSize: 32
+  binFold: x.a.b.c.(binSize r.x.(x x.f.(a (f x)) x.f.(b (f x)) f.c r) a.c x)
 
-  A= x.a.b.c.(a x)
-  B= x.a.b.c.(b x)
-  C= a.b.c.c
-  X= (A (A (A (A (A (B (B (B (B (A (B (B (B (B (B (A (A (A (B (B (A (B (A (B (A (A (A (A (B (A (A (A C))))))))))))))))))))))))))))))))
-  Y= (A (A (B (B (B (B (B (B (A (B (A (B (B (B (A (A (A (B (A (A (B (A (A (B (B (A (B (B (B (A (A (A C))))))))))))))))))))))))))))))))
+  A: x.a.b.c.(a x)
+  B: x.a.b.c.(b x)
+  C: a.b.c.c
+  X: (A (A (A (A (A (B (B (B (B (A (B (B (B (B (B (A (A (A (B (B (A (B (A (B (A (A (A (A (B (A (A (A C))))))))))))))))))))))))))))))))
+  Y: (A (A (B (B (B (B (B (B (A (B (A (B (B (B (A (A (A (B (A (A (B (A (A (B (B (A (B (B (B (A (A (A C))))))))))))))))))))))))))))))))
 
   (binFold (add X Y))
 `;
@@ -43,4 +42,4 @@ var test = `
 
 // 279739872 + 496122620
 
-console.log(A.netToLam(A.reduceNet(A.lamToNet(test))));
+console.log(algo(test));
