@@ -18,7 +18,7 @@ var test = `
   Y: (A (A (B (B (B (B (B (B (A (B (A (B (B (B (A (A (A (B (A (A (B (A (A (B (B (A (B (B (B (A (A (A C))))))))))))))))))))))))))))))))
 
 
-  (binFold (binAdd X Y))
+  (binAdd X Y)
 `;
 
 // bX      =  10000101011000111110111100000 = 279739872

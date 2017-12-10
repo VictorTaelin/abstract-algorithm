@@ -22,5 +22,9 @@ function netToLambda(net) {
 module.exports = function(lambda, debug) {
   var net = I.reduce(lambdaToNet(lambda));
   var term = netToLambda(net);
-  return {term: term, stats: net.stats};
+  return debug === true
+    ? {term: term, stats: net.stats}
+    : typeof debug === "function"
+    ? debug(term, stats)
+    : term;
 }

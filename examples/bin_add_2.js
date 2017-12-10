@@ -30,8 +30,8 @@ var test = `
   A: x.a.b.c.(a x)
   B: x.a.b.c.(b x)
   C: a.b.c.c
-  X: (A (A (A (A (A (B (B (B (B (A (B (B (B (B (B (A (A (A (B (B (A (B (A (B (A (A (A (A (B (A (A (A C))))))))))))))))))))))))))))))))
-  Y: (A (A (B (B (B (B (B (B (A (B (A (B (B (B (A (A (A (B (A (A (B (A (A (B (B (A (B (B (B (A (A (A C))))))))))))))))))))))))))))))))
+  X: (B (A (A (A (A (B (A (A (A C)))))))))
+  Y: (B (B (A (B (B (B (A (A (A C)))))))))
 
   (binFold (add X Y))
 `;
