@@ -7,8 +7,8 @@ function encode(term) {
   var kind = 1;
   var m = [];
   return {mem: m, ptr: (function encode(term, scope){
-    switch (term.type){
-      case L.LAM: 
+    switch (term.ctor){
+      case "Lam": 
         var fun = I.Node(m,1);
         var era = I.Node(m,0);
         I.link(m, I.Wire(fun,1), I.Wire(era,0));
@@ -16,14 +16,14 @@ function encode(term) {
         var bod = encode(term.body, [fun].concat(scope));
         I.link(m, I.Wire(fun,2), bod);
         return I.Wire(fun,0);
-      case L.APP:
+      case "App":
         var app = I.Node(m,1);
         var fun = encode(term.left, scope);
         I.link(m, I.Wire(app,0), fun);
         var arg = encode(term.right, scope);
         I.link(m, I.Wire(app,1), arg);
         return I.Wire(app,2);
-      case L.VAR:
+      case "Var":
         var lam = scope[term.index];
         if (I.kind(m,I.node(I.flip(m,I.Wire(lam,1)))) === 0) {
           return I.Wire(lam,1);
