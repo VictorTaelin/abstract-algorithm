@@ -18,9 +18,9 @@ function encode(term) {
         return I.Wire(fun,0);
       case "App":
         var app = I.Node(m,1);
-        var fun = encode(term.left, scope);
+        var fun = encode(term.func, scope);
         I.link(m, I.Wire(app,0), fun);
-        var arg = encode(term.right, scope);
+        var arg = encode(term.argm, scope);
         I.link(m, I.Wire(app,1), arg);
         return I.Wire(app,2);
       case "Var":

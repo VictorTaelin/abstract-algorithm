@@ -87,6 +87,6 @@ console.log("Pretty:", show(L.toString(L.reduce(L.fromString(lambda)))));
 console.log("");
 
 console.log("Evaluating it with Lamping's algorithm (oracleless):");
-console.log("Result:", A(lambda).term);
-console.log("Pretty:", show(A(lambda).term));
+console.log("Result:", A(lambda));
+console.log("Pretty:", show(A(lambda)));
 console.log("");
