@@ -45,7 +45,7 @@ function link(mem, a, b) {
 function reduce(net) {
   var visit = [net.ptr];
   var prev, next, back;
-  net.stats = {loops: 0, rewrites: 0};
+  net.stats = {loops: 0, rewrites: 0, betaReductions: 0};
   while (visit.length > 0) {
     ++net.stats.loops;
     prev = visit.pop();
@@ -57,6 +57,9 @@ function reduce(net) {
     if (port(prev) === 0) {
       if (port(next) === 0 && node(next) !== node(prev)){ 
         ++net.stats.rewrites;
+        if (kind(net.mem, node(next)) === 1 && kind(net.mem, node(prev)) === 1) {
+          ++net.stats.betaReductions;
+        }
         back = flip(net.mem, Wire(node(next), meta(net.mem, node(next))));
         rewrite(net.mem, node(next), node(prev));
         visit.push(flip(net.mem, back));
