@@ -13,43 +13,45 @@ const fromString = src => {
     }
     return nam;
   };
-
-  var parseTerm = (ctx) => {
+  var rem = (ctx) => {
+    return ctx ? (ctx[0][1] ? [ctx[0],rem(ctx[1])] : rem(ctx[1])) : null;
+  };
+  var parseTerm = (ctx, nofv) => {
     switch (src[i++]) {
       case ' ':
       case ' ':
-        return parseTerm(ctx);
+        return parseTerm(ctx, nofv);
       case '\n':
-        return parseTerm(ctx);
+        return parseTerm(ctx, nofv);
       case '#':
-        var nam = parseName(ctx);
-        var bod = parseTerm([[nam,null],ctx]);
+        var nam = parseName();
+        var bod = parseTerm([[nam,null],ctx], nofv);
         return Lam(bod);
       case "$":
         var nam = parseName();
-        var val = parseTerm(ctx);
-        var bod = parseTerm([[nam,val],ctx]);
+        var val = parseTerm(rem(ctx), true);
+        var bod = parseTerm([[nam,val],ctx], nofv);
         return bod;
       case "/":
-        var fun = parseTerm(ctx);
-        var arg = parseTerm(ctx);
+        var fun = parseTerm(ctx, nofv);
+        var arg = parseTerm(ctx, nofv);
         return App(fun, arg);
       default:
         --i;
         var nam = parseName();
         var dph = 0;
         while (ctx && ctx[0][0] !== nam) {
+          dph += ctx[0][1] === null ? 1 : 0;
           ctx = ctx[1];
-          ++dph;
         }
         if (ctx) {
           return ctx[0][1] ? ctx[0][1] : Var(dph);
         } else {
-          throw "Unbound variable " + nam;
+          throw "Unbound variable '" + nam + "'.";
         }
     }
   };
-  return parseTerm(null);
+  return parseTerm(null, false);
 };
 
 const toString = term => {
@@ -132,8 +134,14 @@ const fromNet = net => {
   })(net.ptr, null, 0);
 };
 
-const reduce = src =>
-  toString(fromNet(I.reduce(toNet(fromString(src)))));
+const reduce = (src, returnStats) => {
+  const reduced = I.reduce(toNet(fromString(src)));
+  if (returnStats) {
+    return {term: toString(fromNet(reduced)), stats: reduced.stats};
+  } else {
+    return toString(fromNet(reduced));
+  };
+};
 
 module.exports = {
   Var,
