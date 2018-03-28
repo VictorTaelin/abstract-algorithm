@@ -6,12 +6,12 @@ const App = (fun, arg) => ({tag: "App", fun, arg});
 
 const fromString = src => {
   var i = 0;
-  var parseName = () => {
-    var nam = "";
-    while (src[i] && !/[ \n]/.test(src[i])) {
-      nam += src[i++];
+  var parseString = (name) => {
+    var str = "";
+    while (src[i] && (name ? !/[ \n]/.test(src[i]) : src[i] !== ")")) {
+      str += src[i++];
     }
-    return nam;
+    return str;
   };
   var rem = (ctx) => {
     return ctx ? (ctx[0][1] ? [ctx[0],rem(ctx[1])] : rem(ctx[1])) : null;
@@ -24,11 +24,11 @@ const fromString = src => {
       case '\n':
         return parseTerm(ctx, nofv);
       case '#':
-        var nam = parseName();
+        var nam = parseString(1);
         var bod = parseTerm([[nam,null],ctx], nofv);
         return Lam(bod);
-      case "$":
-        var nam = parseName();
+      case "@":
+        var nam = parseString(1);
         var val = parseTerm(rem(ctx), true);
         var bod = parseTerm([[nam,val],ctx], nofv);
         return bod;
@@ -36,9 +36,21 @@ const fromString = src => {
         var fun = parseTerm(ctx, nofv);
         var arg = parseTerm(ctx, nofv);
         return App(fun, arg);
+      case "(":
+        var str = parseString();
+        var lis = arr => {
+          return arr.reduce((t,h) => {
+            return Lam(Lam(App(App(Var(1), h), t)));
+          }, Lam(Lam(Var(0))));
+        };
+        return lis(str.split("").map(chr => {
+          return lis(chr.charCodeAt(0).toString(2).split("").reverse().map(bit => {
+            return Lam(Lam(Var(1 - Number(bit))));
+          }));
+        }));
       default:
         --i;
-        var nam = parseName();
+        var nam = parseString(1);
         var dph = 0;
         while (ctx && ctx[0][0] !== nam) {
           dph += ctx[0][1] === null ? 1 : 0;
@@ -60,14 +72,56 @@ const toString = term => {
     const inc = s => !s ? "a" : s[0] === "z" ? "a" + inc(s.slice(1)) : suc(s) + s.slice(1);
     return n === 0 ? "a" : inc(varName(n - 1));
   }
+  const interpretLiteral = (term) => {
+    const bind = (value, fn) =>
+      value === null ? null : fn(value);
+    const getList = (term) =>
+      (  term.tag === "Lam"
+      && term.bod.tag === "Lam"
+      && term.bod.bod.tag === "App"
+      && term.bod.bod.fun.tag === "App"
+      && term.bod.bod.fun.fun.tag === "Var"
+      && term.bod.bod.fun.fun.idx === 1
+      ?  bind(getList(term.bod.bod.arg), list =>
+        [term.bod.bod.fun.arg].concat(list))
+      :  term.tag === "Lam"
+      && term.bod.tag === "Lam"
+      && term.bod.bod.tag === "Var"
+      && term.bod.bod.idx === 0
+      ?  []
+      :  null);
+    const getBit = (term) =>
+      (  term.tag === "Lam"
+      && term.bod.tag === "Lam"
+      && term.bod.bod.tag === "Var"
+      && term.bod.bod.idx <= 1
+      ? 1 - Number(term.bod.bod.idx)
+      : null);
+    const getString = (term) =>
+      ( bind(getList(term), chars =>
+        chars.reduce((mayStr,chr) =>
+          bind(mayStr, str =>
+          bind(getList(chr), bits =>
+          bind(bits.reduce((mayBits,bit) =>
+            bind(mayBits, bits =>
+            bind(getBit(bit), bit =>
+            bits + bit)), ""), bits =>
+          String.fromCharCode(parseInt(bits,2)) + str))), "")));
+    return getString(term);
+  };
   const go = (term, dph) => {
-    switch (term.tag) {
-      case "Var":
-        return varName(dph - term.idx - 1);
-      case "App":
-        return "/" + go(term.fun, dph) + " " + go(term.arg, dph);
-      case "Lam":
-        return "#" + varName(dph) + " " + go(term.bod, dph + 1);
+    const literal = interpretLiteral(term);
+    if (false) {
+      return "(" + literal + ")";
+    } else {
+      switch (term.tag) {
+        case "Var":
+          return varName(dph - term.idx - 1);
+        case "App":
+          return "/" + go(term.fun, dph) + " " + go(term.arg, dph);
+        case "Lam":
+          return "#" + varName(dph) + " " + go(term.bod, dph + 1);
+      }
     }
   };
   return go(term, 0);
