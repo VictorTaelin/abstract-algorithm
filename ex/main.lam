@@ -46,15 +46,15 @@
 @Bool.not #b #tru #fal
   //b fal tru
 
-@List.F.nil #con #nil
+@Fold.nil #con #nil
   nil
 
-@List.F.con #x #xs #con #nil
+@Fold.con #x #xs #con #nil
   //con
     x
     //xs con nil
 
-@List.F.map #f #xs #con #nil
+@Fold.map #f #xs #con #nil
   //xs
     #x /con /f x
     nil
@@ -72,8 +72,8 @@
 
 @List.fold /Y #R #xs
   //xs
-    #x #xs //List.F.con x /R xs
-    List.F.nil
+    #x #xs //Fold.con x /R xs
+    Fold.nil
 
 @List.defold #xs
   //xs List.con List.nil
@@ -372,10 +372,16 @@
 @Tuple.shr #n #T #t
   /T ///Tuple.edit n #T #A /T #a /t A #x x
 
-@test
-  #A #B #C #D #E
-    //6
-      /Tuple.shl 5
-      #t /////t A B C D E
+@Tuple.fold #n #t #con #nil
+  /t ///n
+    #term #edit #v /term #xs /edit //con v xs
+    #edit /edit nil
+    #x x
 
-test
+@T #a #b a
+@F #a #b b
+
+//Tuple.fold 6
+  #t //////t T F T F T F
+
+  
