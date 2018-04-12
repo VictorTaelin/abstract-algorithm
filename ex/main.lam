@@ -37,14 +37,20 @@
 @CNat.double
   /CNat.mul 2
 
-@Bool.true
-  #tru #fal tru
-
 @Bool.false
-  #tru #fal fal
+  #false #true false
 
-@Bool.not #b #tru #fal
-  //b fal tru
+@Bool.true
+  #false #true true
+
+@Bool.not #b #false #true
+  //b true false
+
+@Bool.xor #a
+  //a id Bool.not
+
+@Bool.if #b #caseTrue #caseFalse
+  //b caseFalse caseTrue
 
 @Fold.nil #con #nil
   nil
@@ -58,6 +64,17 @@
   //xs
     #x /con /f x
     nil
+
+@Fold.zip #f #xs #ys #con #nil
+  ///xs
+    #x #xs #ys //ys
+      #y #ys //con //f x y /xs ys
+      nil
+    #ys nil
+    //ys
+      #x #xs #con #nil //con x xs
+      #con #nil nil
+      
 
 @List.con #x #xs #con #nil
   //con x xs
@@ -82,6 +99,7 @@
   //xs
     #x #xs x
     x
+
 @InfList.tail #il
   /il #h #t t
 
@@ -363,6 +381,9 @@
     #X #A /X #T #V /A #t //T t V
     #A /A #t t
 
+@Tuple.open #n #t #fn
+  /t //Tuple.edit n fn
+
 @Tuple.new #n
   //Tuple.edit n #x x
 
@@ -378,10 +399,34 @@
     #edit /edit nil
     #x x
 
-@T #a #b a
-@F #a #b b
+@Tuple.defold #xs #t
+  ///xs
+    #x #xs #r /xs /r x
+    #r r
+    t 
 
-//Tuple.fold 6
-  #t //////t T F T F T F
+@Tuple.zip_ #n #f #a #b
+  /Tuple.defold
+    ///Fold.zip
+      f
+      //Tuple.fold n a
+      //Tuple.fold n b
 
-  
+@Tuple.zip #n #f #a #b #t
+  ///Tuple.open n a #A
+  ///Tuple.open n b #B
+  //Tuple.defold
+    ///Fold.zip
+      f
+      //Tuple.fold n A
+      //Tuple.fold n B
+    t
+
+@test
+  @F #a #b a
+  @T #a #b b
+  @X #t ////////t T T F F T T F F
+  @Y #t ////////t T F T F T F T F
+  ///16 2 ///Tuple.zip 8 Bool.xor X Y
+
+test
