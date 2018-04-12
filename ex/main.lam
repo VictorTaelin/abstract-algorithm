@@ -374,14 +374,11 @@
   @F #t #E //E #T #A /T #a /t A #x x
   /T //F t /Tuple.edit n
 
-@tmp_exmp #EDIT #A #B #C #D #E /EDIT #X /////X A B C D E
-
-@tmp_goal_a #A #B #C #D #E #X /////X E A B C D
-
-#A #B #C #D #E
-  //5
-    /Tuple.shr 5
-    #t /////t A B C D E
+@test
+  #A #B #C #D #E
+    //5
+      /Tuple.shr 5
+      #t /////t A B C D E
 
 
 
