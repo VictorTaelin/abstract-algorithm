@@ -367,23 +367,15 @@
   //Tuple.edit n #x x
 
 @Tuple.shl #n #T #t
-  @F #t #E #A //E #T //T #A t A #x x
-  /T //F t /Tuple.edit n
+  /T #A ///Tuple.edit n #T //T #A t A #x x
 
 @Tuple.shr #n #T #t
-  @F #t #E //E #T #A /T #a /t A #x x
-  /T //F t /Tuple.edit n
+  /T ///Tuple.edit n #T #A /T #a /t A #x x
 
 @test
   #A #B #C #D #E
-    //5
-      /Tuple.shr 5
+    //6
+      /Tuple.shl 5
       #t /////t A B C D E
 
-
-
-
-
-
-
-
+test
