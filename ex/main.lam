@@ -1,0 +1,388 @@
+@U #f
+  /f f
+
+@Y #f
+  /#x /f /x x #x /f /x x
+
+@id
+  #x x
+
+@flip #f #a #b
+  //f b a
+
+@K #a #b
+  b
+
+@CNat.suc #n #s #z
+  /s //n s z
+
+@CNat.add #a #b #s #z
+  //a s //b s z
+
+@CNat.mul #a #b #s #z
+  //a /b s z
+
+@CNat.exp #a #b
+  /b a
+
+@CNat.mod #a #b
+  ///b #c #d /c #e //d #f #g /f //e f g e #c /c #d #e e #c //a ///b #d #e #f /d #g //e g f #d d #d #e /e d ///b #d #e d #d d #d d
+
+@CNat.P #n
+  //CNat.exp 2 n
+
+@CNat.expMod #a #b #m
+  //CNat.mod //CNat.exp a b m
+
+@CNat.double
+  /CNat.mul 2
+
+@Bool.true
+  #tru #fal tru
+
+@Bool.false
+  #tru #fal fal
+
+@Bool.not #b #tru #fal
+  //b fal tru
+
+@List.F.nil #con #nil
+  nil
+
+@List.F.con #x #xs #con #nil
+  //con
+    x
+    //xs con nil
+
+@List.F.map #f #xs #con #nil
+  //xs
+    #x /con /f x
+    nil
+
+@List.con #x #xs #con #nil
+  //con x xs
+
+@List.nil #con #nil
+  nil
+
+@List.map #f /Y #R #xs
+  //xs
+    #x #xs //List.con /f x /R xs
+    List.nil
+
+@List.fold /Y #R #xs
+  //xs
+    #x #xs //List.F.con x /R xs
+    List.F.nil
+
+@List.defold #xs
+  //xs List.con List.nil
+
+@List.head #x #xs
+  //xs
+    #x #xs x
+    x
+@InfList.tail #il
+  /il #h #t t
+
+@InfList.head #il
+  /il #h #t h
+
+@InfList.nth #n #il
+  /InfList.head //n InfList.tail il
+
+@InfList.take #n
+  //n
+    #p #il /il #h #t #con #nil //con h /p t
+    #il #con #nil nil
+
+@Pair.new #a #b
+  #new //new a b
+
+@Pair.fst #p
+  /p #a #b a
+
+@Pair.snd #p
+  /p #a #b b
+
+@Triple.new #a #b #c
+  #new ///new a b c
+
+@Triple.fst #t
+  /t #a #b #c a
+
+@Triple.snd #t
+  /t #a #b #c b
+
+@Triple.trd #t
+  /t #a #b #c c
+
+@Bin.suc /Y #r #x #a #b
+  //x b #x /a /r x
+
+@Bin.0 /Y #r #a #b
+  /a r
+
+@Bin.O #bs #o #i
+  /o bs
+
+@Bin.I #bs #o #i
+  /i bs
+
+@Bin.peek #n #x
+  ///n
+    #t /t #x //x
+      #x #r #t //t x #a #b #c ///r a b /a c
+      #x #r #t //t x #a #b #c ///r a b /b c
+    #t //t x #a #b #c c
+    #x #r r
+
+@Bin.add /Y #R #xxs #yys
+  ///xxs
+    #xs #t //t id xs
+    #xs #t //t Bin.suc xs
+    #f #xs ///yys
+      #ys #t //t id ys
+      #ys #t //t Bin.suc ys
+      #g #ys /f /g /Bin.O //R xs ys
+
+@Bin.mul #xxs
+  / #f /Y #R #yys
+    ///yys
+      #ys #R    /Bin.O /R ys
+      #ys #R /f /Bin.O /R ys
+      R
+    /Bin.add xxs
+
+@Bin.fromCNat #c
+  //c Bin.suc Bin.0
+
+@Bin.1
+  /Bin.suc Bin.0
+
+@Bin.2
+  /Bin.suc Bin.1
+
+@Bin.3
+  /Bin.suc Bin.2
+
+@Bin.4
+  /Bin.suc Bin.3
+
+@Bin.5
+  /Bin.suc Bin.4
+
+@Bin.6
+  /Bin.suc Bin.5
+
+@Bin.7
+  /Bin.suc Bin.6
+
+@Bin.8
+  /Bin.suc Bin.7
+
+@Bin.9
+  /Bin.suc Bin.8
+
+@Bin.27
+  /Bin.I /Bin.I /Bin.I /Bin.O /Bin.I Bin.0
+
+@Bin.137
+  /Bin.I /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I Bin.0
+
+@Bin.rnd8.a
+  /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.I /Bin.O Bin.0
+
+@Bin.rnd8.b
+  /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O Bin.0
+
+@Bin.rnd32.a
+  /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.I /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O
+  /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.I /Bin.I
+  /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O
+  /Bin.O /Bin.I /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.I /Bin.O
+  /Bin.O /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O
+  Bin.0
+
+@Bin.rnd32.b
+  /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O
+  /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.I /Bin.O /Bin.O
+  /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.I
+  /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.I
+  /Bin.I /Bin.O /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O
+  /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.I
+  Bin.0
+
+@Bin.rnd256.a
+  /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O
+  /Bin.I /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O
+  /Bin.I /Bin.O /Bin.I /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I
+  /Bin.O /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O
+  /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I
+  /Bin.I /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.I
+  /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.I /Bin.O
+  /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O
+  /Bin.O /Bin.I /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O /Bin.I
+  /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O
+  /Bin.I /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O
+  /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.I /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I
+  /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I /Bin.I /Bin.I
+  /Bin.I /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O
+  /Bin.O /Bin.I /Bin.I /Bin.I /Bin.I /Bin.I /Bin.I /Bin.I
+  Bin.0
+
+@Bin.rnd256.b
+  /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.I
+  /Bin.I /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O
+  /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O
+  /Bin.I /Bin.I /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O
+  /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O
+  /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I
+  /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O
+  /Bin.I /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O
+  /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O
+  /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O
+  /Bin.I /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.I /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O
+  /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O
+  /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I
+  /Bin.I /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O
+  /Bin.I /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I
+  /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.I
+  /Bin.O /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I
+  /Bin.I /Bin.I /Bin.O /Bin.O /Bin.I /Bin.I /Bin.O /Bin.O
+  /Bin.I /Bin.I /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I /Bin.I
+  /Bin.O /Bin.I /Bin.I /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I
+  /Bin.I /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.I
+  /Bin.I /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O /Bin.O
+  /Bin.O /Bin.O /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.I /Bin.I
+  /Bin.O /Bin.O /Bin.I /Bin.O /Bin.I /Bin.O /Bin.O /Bin.I
+  Bin.0
+
+@Bin.toCNat #size #xxs
+  /Triple.trd
+    //size
+      #t /t #xxs
+        //xxs
+          #xs #add #ret ///Triple.new xs /CNat.double add ret
+          #xs #add #ret ///Triple.new xs /CNat.double add //CNat.add add ret
+      ///Triple.new xxs 1 0
+
+@Bin.slowAdd #xxs #yys
+  ////Bin.toCNat 32 xxs Bin.suc yys
+
+@Bin.xor /Y #R #xxs #yys
+  ///xxs
+    #xs #yys //yys
+      #ys /Bin.O //R xs ys
+      #ys /Bin.I //R xs ys
+    #xs #yys //yys
+      #ys /Bin.I //R xs ys
+      #ys /Bin.O //R xs ys
+    yys
+
+@Bin.eq #n
+  //n
+    #p #xxs ///xxs 
+      #xs #p #yys //yys
+        #ys //p xs ys
+        #ys #o #i o
+      #xs #p #yys //yys
+        #ys #o #i o
+        #ys //p xs ys
+      p
+    #xxs #yys #o #i i
+
+@CNat.printBits
+  #n #c //Bin.peek n //c Bin.suc Bin.0
+
+@Bin.test0
+  //Bin.peek 32 //Bin.add Bin.rnd32.a Bin.rnd32.b
+
+@KeccakRC
+  @I Bin.I
+  @O Bin.O
+  @E Bin.0
+  //List.con /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /O /I /O /O /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /O /I /O /I /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /I /I /O /I /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /I /O /O /O /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /I /O /O /I /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /O /I /O /I /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /O /O /O /I /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /I /O /O /I /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /O /I /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /I /I /O /I /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /I /I /O /I /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /I /O /O /I /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /I /I /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /O /I /O /I /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /O /I /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /I /O /O /O /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  //List.con /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+  //List.con /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
+  List.nil
+
+@Tuple.edit #n
+  //n
+    #X #A /X #T #V /A #t //T t V
+    #A /A #t t
+
+@Tuple.new #n
+  //Tuple.edit n #x x
+
+@Tuple.shl #n #T #t
+  @F #t #E #A //E #T //T #A t A #x x
+  /T //F t /Tuple.edit n
+
+@tmp_exmp #EDIT #A #B #C #D #E /EDIT #X /////X A B C D E
+
+@tmp_goal_a #A #B #C #D #E #X /////X E A B C D
+
+#A #B #C #D #E
+  //128b
+    /Tuple.shl 5
+    #t /////t A B C D E
+
+
+
+
+
+
+
+

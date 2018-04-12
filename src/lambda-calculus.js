@@ -116,11 +116,11 @@ const toString = term => {
     } else {
       switch (term.tag) {
         case "Var":
-          return varName(dph - term.idx - 1);
+          return varName(term.idx);
         case "App":
           return "/" + go(term.fun, dph) + " " + go(term.arg, dph);
         case "Lam":
-          return "#" + varName(dph) + " " + go(term.bod, dph + 1);
+          return "#" + go(term.bod, dph + 1);
       }
     }
   };
