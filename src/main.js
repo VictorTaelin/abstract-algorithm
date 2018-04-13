@@ -33,7 +33,7 @@ try {
 }
 
 var start = Date.now();
-var result = L.reduce(`${base} ${code}`, stats, bruijn);
+var result = L.reduce(`${base} ${code}`, 1, bruijn);
 
 console.log(result.term);
 if (stats) {
