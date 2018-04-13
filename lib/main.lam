@@ -418,8 +418,12 @@
 @test
   @F #a #b a
   @T #a #b b
-  @X #t ////////t T T F F T T F F
-  @Y #t ////////t T F T F T F T F
-  ///16 2 ///Tuple.zip 8 Bool.xor X Y
+  @X #t
+    ////////////////////////////////////////////////////////////////t
+    T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F 
+  @Y #t
+    ////////////////////////////////////////////////////////////////t
+    T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F 
+  //1 ///Tuple.zip 64 Bool.xor X Y
 
-/Tuple.open 4
+test
