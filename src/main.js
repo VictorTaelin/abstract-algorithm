@@ -4,13 +4,12 @@ var fs = require("fs");
 var path = require("path");
 var L = require("./lambda-calculus.js");
 
-
 try {
   var args = [].slice.call(process.argv, 2);
   var stats = args.indexOf("-s") !== -1 || args.indexOf("--stats") !== -1;
   var bruijn = args.indexOf("-b") !== -1 || args.indexOf("--bruijn") !== -1;
   var file = args[args.length - 1];
-  var base = fs.readFileSync(path.join(__dirname, "..", "ex", "base.lam"), "utf8");
+  var base = fs.readFileSync(path.join(__dirname, "..", "lib", "base.lam"), "utf8");
   var code = fs.readFileSync("./" + (file.indexOf(".") === -1 ? file + ".lam" : file), "utf8");
 } catch (e) {
   console.log("Absal evaluates λ-terms optimally (no oracle).");
