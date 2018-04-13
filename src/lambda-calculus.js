@@ -36,18 +36,6 @@ const fromString = src => {
         var fun = parseTerm(ctx, nofv);
         var arg = parseTerm(ctx, nofv);
         return App(fun, arg);
-      case "(":
-        var str = parseString();
-        var lis = arr => {
-          return arr.reduce((t,h) => {
-            return Lam(Lam(App(App(Var(1), h), t)));
-          }, Lam(Lam(Var(0))));
-        };
-        return lis(str.split("").map(chr => {
-          return lis(chr.charCodeAt(0).toString(2).split("").reverse().map(bit => {
-            return Lam(Lam(Var(1 - Number(bit))));
-          }));
-        }));
       default:
         --i;
         var nam = parseString(1);
@@ -66,62 +54,21 @@ const fromString = src => {
   return parseTerm(null, false);
 };
 
-const toString = term => {
+const toString = (term, bruijn) => {
   const varName = n => {
     const suc = c => String.fromCharCode(c.charCodeAt(0) + 1);
     const inc = s => !s ? "a" : s[0] === "z" ? "a" + inc(s.slice(1)) : suc(s) + s.slice(1);
     return n === 0 ? "a" : inc(varName(n - 1));
   }
-  const interpretLiteral = (term) => {
-    const bind = (value, fn) =>
-      value === null ? null : fn(value);
-    const getList = (term) =>
-      (  term.tag === "Lam"
-      && term.bod.tag === "Lam"
-      && term.bod.bod.tag === "App"
-      && term.bod.bod.fun.tag === "App"
-      && term.bod.bod.fun.fun.tag === "Var"
-      && term.bod.bod.fun.fun.idx === 1
-      ?  bind(getList(term.bod.bod.arg), list =>
-        [term.bod.bod.fun.arg].concat(list))
-      :  term.tag === "Lam"
-      && term.bod.tag === "Lam"
-      && term.bod.bod.tag === "Var"
-      && term.bod.bod.idx === 0
-      ?  []
-      :  null);
-    const getBit = (term) =>
-      (  term.tag === "Lam"
-      && term.bod.tag === "Lam"
-      && term.bod.bod.tag === "Var"
-      && term.bod.bod.idx <= 1
-      ? 1 - Number(term.bod.bod.idx)
-      : null);
-    const getString = (term) =>
-      ( bind(getList(term), chars =>
-        chars.reduce((mayStr,chr) =>
-          bind(mayStr, str =>
-          bind(getList(chr), bits =>
-          bind(bits.reduce((mayBits,bit) =>
-            bind(mayBits, bits =>
-            bind(getBit(bit), bit =>
-            bits + bit)), ""), bits =>
-          String.fromCharCode(parseInt(bits,2)) + str))), "")));
-    return getString(term);
-  };
+  ;
   const go = (term, dph) => {
-    const literal = interpretLiteral(term);
-    if (false) {
-      return "(" + literal + ")";
-    } else {
-      switch (term.tag) {
-        case "Var":
-          return varName(term.idx);
-        case "App":
-          return "/" + go(term.fun, dph) + " " + go(term.arg, dph);
-        case "Lam":
-          return "#" + go(term.bod, dph + 1);
-      }
+    switch (term.tag) {
+      case "Var":
+        return varName(bruijn ? term.idx : dph - term.idx - 1);
+      case "App":
+        return "/" + go(term.fun, dph) + " " + go(term.arg, dph);
+      case "Lam":
+        return "#" + (bruijn ? "" : varName(dph) + " ") + go(term.bod, dph + 1);
     }
   };
   return go(term, 0);
@@ -188,10 +135,10 @@ const fromNet = net => {
   })(net.ptr, null, 0);
 };
 
-const reduce = (src, returnStats) => {
+const reduce = (src, returnStats, bruijn) => {
   const reduced = I.reduce(toNet(fromString(src)));
   if (returnStats) {
-    return {term: toString(fromNet(reduced)), stats: reduced.stats};
+    return {term: toString(fromNet(reduced), bruijn), stats: reduced.stats};
   } else {
     return toString(fromNet(reduced));
   };
@@ -207,17 +154,3 @@ module.exports = {
   toNet,
   reduce
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

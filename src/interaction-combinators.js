@@ -45,7 +45,7 @@ function link(mem, a, b) {
 function reduce(net) {
   var visit = [net.ptr];
   var prev, next, back;
-  net.stats = {loops: 0, rewrites: 0, betaReductions: 0};
+  net.stats = {loops: 0, rewrites: 0, betas: 0, dupls: 0, annis: 0};
   while (visit.length > 0) {
     ++net.stats.loops;
     prev = visit.pop();
@@ -58,10 +58,10 @@ function reduce(net) {
       if (port(next) === 0 && node(next) !== node(prev)){ 
         ++net.stats.rewrites;
         if (kind(net.mem, node(next)) === 1 && kind(net.mem, node(prev)) === 1) {
-          ++net.stats.betaReductions;
+          ++net.stats.betas;
         }
         back = flip(net.mem, Wire(node(next), meta(net.mem, node(next))));
-        rewrite(net.mem, node(next), node(prev));
+        rewrite(net.mem, node(next), node(prev), net.stats);
         visit.push(flip(net.mem, back));
       } else {
         setMeta(net.mem, node(prev), 3);
@@ -84,7 +84,7 @@ function reduce(net) {
 // in turn, perform reductions in parallel. There is an inherent tradeoff
 // between laziness and parallelization, because, by reducing nodes in parallel,
 // you inevitably reduce redexes which do not influence on the normal form.
-function rewrite(mem, x, y) {
+function rewrite(mem, x, y, stats) {
   if (kind(mem,x) === kind(mem,y)){
     //  a          b            a   b
     //   \        /              \ / 
@@ -93,6 +93,7 @@ function rewrite(mem, x, y) {
     //  c          d            c   d
     link(mem, flip(mem, Wire(x, 1)),  flip(mem, Wire(y, 1)));
     link(mem, flip(mem, Wire(x, 2)),  flip(mem, Wire(y, 2)));
+    ++stats.annis;
   } else {
     //  a          d       a - B --- A - d
     //   \        /              \ /   
@@ -109,6 +110,7 @@ function rewrite(mem, x, y) {
     link(mem, flip(mem, Wire(x1, 2)), flip(mem, Wire(y2, 1)));
     link(mem, flip(mem, Wire(x2, 1)), flip(mem, Wire(y1, 2)));
     link(mem, flip(mem, Wire(x2, 2)), flip(mem, Wire(y2, 2)));
+    ++stats.dupls;
   }
 }
 

@@ -405,13 +405,6 @@
     #r r
     t 
 
-@Tuple.zip_ #n #f #a #b
-  /Tuple.defold
-    ///Fold.zip
-      f
-      //Tuple.fold n a
-      //Tuple.fold n b
-
 @Tuple.zip #n #f #a #b #t
   ///Tuple.open n a #A
   ///Tuple.open n b #B
