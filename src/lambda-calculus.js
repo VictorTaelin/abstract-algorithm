@@ -152,5 +152,6 @@ module.exports = {
   toString,
   fromNet,
   toNet,
-  reduce
+  reduce,
+  net: I
 };

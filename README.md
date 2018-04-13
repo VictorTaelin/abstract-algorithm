@@ -6,25 +6,31 @@ A cleaned up adaptation of [Lamping's abstract algorithm](http://dl.acm.org/cita
 
 ## Usage
 
-1. Install
+- Install
 
     ```bash
-    npm install abstract-algorithm
+    npm install -g abstract-algorithm
     ```
 
-2. Use
+- Use as a lib
 
     ```javascript
-    const algo = require("abstract-algorithm");
+    const absal = require(".");
 
     // church-encoded exponentiation of 2^2
     const term = `
-      two: s.z.(s (s z))
-      (two two)
+      @two #s #z /s /s z
+      /two two
     `;
 
     // evaluates optimally
-    console.log(algo(term));
+    console.log(absal.reduce(term,1)); // 1 = return stats
+    ```
+
+- Use as a command
+
+    ```bash
+    absal fileName.lam
     ```
 
 ## Bla bla bla
