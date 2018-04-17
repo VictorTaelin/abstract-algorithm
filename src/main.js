@@ -14,11 +14,11 @@ try {
 } catch (e) {
   console.log("Absal evaluates λ-terms optimally (no oracle).");
   console.log("Usage:");
-  console.log("  absal [--stats] [--bruijn] fileName[.lam]"); 
-  console.log("Syntax:"); 
-  console.log("  #arg body      : lambda expression"); 
-  console.log("  /fn arg        : applies fn to arg"); 
-  console.log("  @name val expr : let name be val in expr"); 
+  console.log("  absal [--stats] [--bruijn] fileName[.lam]");
+  console.log("Syntax:");
+  console.log("  #arg body      : lambda expression");
+  console.log("  /fn arg        : applies fn to arg");
+  console.log("  @name val expr : let name be val in expr");
   console.log("Example:");
   console.log("  @four #f #x /f /f /f /f x");
   console.log("  /four four");

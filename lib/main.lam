@@ -13,6 +13,9 @@
 @K #a #b
   b
 
+@CNat.zer #s #z
+  z
+
 @CNat.suc #n #s #z
   /s //n s z
 
@@ -36,6 +39,11 @@
 
 @CNat.double
   /CNat.mul 2
+
+@CNat.toNat
+  #n //n
+    #n #succ #zero /succ n
+    #succ #zero zero
 
 @Bool.false
   #false #true false
@@ -75,6 +83,14 @@
       #x #xs #con #nil //con x xs
       #con #nil nil
       
+@Fold.nth #x #i #xs
+  ////xs
+    #x #xs #i //i
+      #i /xs i
+      #X x
+    #i #X X
+    /CNat.toNat i
+    x
 
 @List.con #x #xs #con #nil
   //con x xs
@@ -346,36 +362,6 @@
 @Bin.test0
   //Bin.peek 32 //Bin.add Bin.rnd32.a Bin.rnd32.b
 
-@KeccakRC
-  @I Bin.I
-  @O Bin.O
-  @E Bin.0
-  //List.con /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /O /I /O /O /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /O /I /O /I /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /I /I /O /I /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /I /O /O /O /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /I /O /O /I /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /O /I /O /I /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /O /O /O /I /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /I /O /O /I /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /O /I /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /I /I /O /I /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /I /I /O /I /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /I /O /O /I /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /I /I /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /O /I /O /I /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /O /I /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /I /O /O /O /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  //List.con /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
-  //List.con /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /I E
-  List.nil
-
 @Tuple.edit #n
   //n
     #X #A /X #T #V /A #t //T t V
@@ -387,10 +373,10 @@
 @Tuple.new #n
   //Tuple.edit n #x x
 
-@Tuple.shl #n #T #t
+@Tuple.rotl #n #m /m #T #t
   /T #A ///Tuple.edit n #T //T #A t A #x x
 
-@Tuple.shr #n #T #t
+@Tuple.rotr #n #m /m #T #t
   /T ///Tuple.edit n #T #A /T #a /t A #x x
 
 @Tuple.fold #n #t #con #nil
@@ -415,15 +401,393 @@
       //Tuple.fold n B
     t
 
-@test
-  @F #a #b a
-  @T #a #b b
-  @X #t
-    ////////////////////////////////////////////////////////////////t
-    T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F T T F F 
-  @Y #t
-    ////////////////////////////////////////////////////////////////t
-    T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F 
-  //1 ///Tuple.zip 64 Bool.xor X Y
+@Tuple.xor #n #t
+  ///Tuple.zip n Bool.xor t
 
-test
+@Tuple.nth #n #i #t
+  ///Tuple.open n t #t
+  ///Fold.nth #x x i //Tuple.fold n t
+  
+@F #a #b a
+
+@T #a #b b
+
+@X0 #t
+  ////////////////////////////////////////////////////////////////t
+  F F F F F F F T F F F F F F T T F F F F F T T T F F F F T T T T F F F T T T T T F F T T T T T T F T T T T T T T F T F T F T F T
+
+@X1 #t
+  ////////////////////////////////////////////////////////////////t
+  T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F T F 
+
+@KeccakRC
+  @I Bool.true
+  @O Bool.false
+  //List.con #t ////////////////////////////////////////////////////////////////t I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t O I O O O O O I O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t O I O I O O O I O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t I I O I O O O I O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t I O O O O O O I O O O O O O O I O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t I O O I O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t O I O I O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t O O O I O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t I O O I O O O O O O O O O O O I O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t O I O I O O O O O O O O O O O O O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t I I O I O O O I O O O O O O O I O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t I I O I O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t I O O I O O O I O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t I I O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t O I O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t O I O I O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t O I O I O O O O O O O O O O O O O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t I O O O O O O I O O O O O O O I O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t O O O O O O O I O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  //List.con #t ////////////////////////////////////////////////////////////////t I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+  //List.con #t ////////////////////////////////////////////////////////////////t O O O I O O O O O O O O O O O I O O O O O O O O O O O O O O O I O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O I
+  List.nil
+
+@Keccak.State
+  #t /////t 
+    #u /////u X0 X0 X0 X0 X0
+    #u /////u X0 X0 X0 X0 X0
+    #u /////u X0 X0 X0 X0 X0
+    #u /////u X0 X0 X0 X0 X0
+    #u /////u X0 X0 X0 X0 X0
+
+@Keccak.State.get #i #j #st
+  ///Tuple.nth 5 i ///Tuple.nth 5 j st
+
+@Fold.gen2 #n #f #con #nil
+  ///n
+    #n #f //con /f CNat.zer /n #n /f /CNat.suc n
+    #f nil
+    f
+
+@Fold.gen #n #f #con #nil
+  ///n
+    #n #k //con /f k /n /CNat.suc k
+    #k nil
+    CNat.zer
+
+@Fold.len #xs #suc #zer
+  //xs #x #xs /suc xs zer
+
+@K
+  //List.con Bool.false
+  //List.con Bool.false
+  //List.con Bool.false
+  //List.con Bool.false
+  //List.con Bool.false
+  //List.con Bool.false
+  //List.con Bool.false
+  //List.con Bool.false
+  List.nil
+
+@List.id /Y #R #xs
+  //xs
+    #x #xs //List.con x /R xs
+    List.nil
+
+@List.folds /Y #R #xs #con #nil
+  //xs
+    #x #xs //con x /R xs
+    nil
+
+@List.map #f #xs #con #nil
+  ///List.folds xs #x /con /f x nil
+
+@List.zip #f /Y #R #xs #ys #con #nil
+  //xs 
+    #x #xs //ys
+      #y #ys //con //f x y //R xs ys
+      nil
+    nil
+
+@List.suc /Y #R #xs #con #nil
+  //xs
+    #x ///x
+      #con #xs //con Bool.true xs
+      #con #xs //con Bool.false /R xs
+      con
+    nil
+
+@O #xs #O #I #E /O xs
+@I #xs #O #I #E /I xs
+@E     #O #I #E E
+@Bits.id /Y #R #xs 
+  ////xs
+    #xs #R /O /R xs
+    #xs #R /I /R xs
+    #R E
+    R
+@Bits.suc /Y #R #xs #O #I #E
+  ///xs I #xs /O /R xs E
+
+@k32 #s #z ///0 2 s ///3 2 s ///6 2 s ///8 2 s ///12 2 s ///15 2 s ///16 2 s ///17 2 s ///18 2 s ///20 2 s ///24 2 s ///25 2 s ///26 2 s ///28 2 s z
+
+7
+
+/Bits.id //k32 Bits.suc /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O /O E
+//Bin.peek 32 //k32 Bin.suc Bin.0
+
+/List.id //64b List.suc K
+
+
+
+
+###/b ###/c ###/c ###/b ###/c ###/c ###/b ###/c ###/b ###/c ###/c ###/c ###/b ###/c ###/c ###/b ###/b ###/b ###/b ###/c ###/b ###/c ###/c ###/c ###/b ###/b ###/b ###/c ###/b ###/c ###/c ###/c ###a
+###/b ###/c ###/c ###/b ###/c ###/c ###/b ###/c ###/b ###/c ###/c ###/c ###/b ###/c ###/c ###/b ###/b ###/b ###/b ###/c ###/b ###/c ###/c ###/c ###/b ###/b ###/b ###/c ###/b ###/c ###/c ###/c ###a
+
+00 000000
+01 111111
+02 022222
+03 103333
+04 010444
+05 121055
+06 002106
+07 113210
+08 020321
+09 101432
+10 012043
+11 123154
+12 000205
+13 111316
+14 022420
+15 103031
+16 010142
+17 121253
+18 002304
+19 113415
+20 020026
+21 101130
+22 012241
+23 123352
+24 000403
+
+
+0000
+1000
+0100
+1100
+0200
+1200
+0010
+1010
+0110
+1110
+0210
+1210
+0020
+1020
+0120
+1120
+0220
+1220
+0030
+1030
+0130
+1130
+0230
+1230
+0001
+1001
+0101
+1101
+0201
+1201
+0011
+1011
+0111
+1111
+0211
+1211
+0021
+1021
+0121
+1121
+0221
+1221
+0031
+1031
+0131
+1131
+
+
+
+
+1
+0
+1
+0
+1
+0
+
+
+
+
+//256b
+  //Fold.zip
+    Bool.xor
+    /List.fold K
+  /List.fold K
+
+
+
+
+
+
+
+/List.id //128b /List.map Bool.not K
+
+
+
+
+
+
+
+
+
+
+
+
+
+#f #t /t #a #b #c #d
+  /f #t ////a b c d
+
+
+
+
+
+
+@K
+  #R //R #t /t R #con #nil //con Bool.true
+  #R //R #t /t R #con #nil //con Bool.true
+  #R //R #t /t R #con #nil //con Bool.true
+  #R //R #t /t R #con #nil //con Bool.true
+  #R //R #t /t R #con #nil nil
+
+@K.id #rxs
+  /rxs #r #xs
+    #R //R #T /T R #CON #NIL
+      //xs #x #xs //CON x /r xs
+                  NIL
+
+@K.id #rxs
+  /rxs #r #xs
+    #R //R #T /T R 
+    #CON #NIL 
+    //xs
+      #x #xs //CON x /r xs
+             #NIL NIL
+
+@K.fold #alg #con #nil
+  /alg
+    #R #xs //xs
+      #x #xs //con x /R xs
+      nil
+
+@K.id #K
+  ///K.fold K
+    #x #xs #R //R #T /T R #con #nil //con x xs
+           #R //R #T /T R #con #nil nil
+
+//2 K.id K
+
+//2 /K.map Bool.not K
+
+
+
+
+
+
+
+
+
+
+
+
+@K.fold #alg #con #nil
+  /alg
+    #R #xs //xs
+      #x #xs //con x /R xs
+      nil
+
+@K.open #rxs #f /rxs #r #xs //xs
+  #x #xs /f #R //R #T /T R #CON #NIL //CON x xs
+         /f #R //R #T /T R #CON #NIL NIL
+
+@K.map #f #rxs
+  /rxs #r #xs
+    #R //R #t /t R #CON #NIL
+    //xs
+      #x #xs //CON /f x /r xs
+             NIL
+
+@K.id #rxs /rxs #r #xs //xs
+  #x #xs #R //R #T /T R #CON #NIL //CON x /r xs
+         #R //R #T /T R #CON #NIL NIL
+
+
+
+//K.open K #K
+/K #r #xs //xs
+  #x #xs //List.con x /r xs
+  List.nil
+
+/K.fold K
+
+#/a #//a #/a b ##//b ##a
+ /d #//a #/a b ##//b ##a
+ /g #//a #/a b ##//b ##a
+ /j #//a #/a b ##//b ##a
+ /m #//a #/a b ##//b ##a
+ /p #//a #/a b ##//b ##a
+ /s #//a #/a b ##//b ##a
+ /v #//a #/a b ##//b ##a /y #//a #/a b ##//b ##a /ba #//a #/a b ##//b ##a /ea #//a #/a b ##//b ##a /ha #//a #/a b ##//b ##a /ka #//a #/a b ##//b ##a /na #//a #/a b ##//b ##a /qa #//a #/a b ##//b ##a /ta #//a #/a b ##//b ##a /wa #//a #/a b ##a
+
+
+  #x #xs //List.con x /r 
+
+#
+  #//a #/a b /b ##//b ##a
+  #//a #/a b /e ##//b ##a
+  #//a #/a b /h ##//b ##a
+  #//a #/a b /k ##//b ##a
+
+
+//K.open #xs //xs List.con List.nil K
+
+/K.fold
+  //64 /K.map Bool.not K
+
+
+
+tabulate : ∀ {n a} {A : Set a} → (Fin n → A) → Vec A n
+tabulate {zero}  f = []
+tabulate {suc n} f = f zero ∷ tabulate (f ∘ suc)
+
+KeccakRC
+  
+  
+
+////Tuple.nth #x x 5 2 #t /////t 1 2 3 4 5
+
+//Tuple.rotr 0 1
+
+//Tuple.fst 0 #t ////t 1 2 3 4
+
+
+
+
+
+@List.open #xs #f
+  //Y #R #xs
+    ///xs
+      #x #xs #f /f #con #nil //con x /R xs
+      #f /f #con #nil nil
+      f
+    xs
+
