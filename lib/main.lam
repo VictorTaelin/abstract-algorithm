@@ -164,7 +164,7 @@
 
 @List.fold /Y #R #xs #con #nil
   //xs
-    #x #xs //con x /R xs
+    #x #xs //con x ///R xs con nil
     nil
 
 @List.toCList /Y #R #xs
@@ -496,4 +496,3 @@
 @I Bool.true
 @K0 #t ////////////////////////////////////////////////////////////////t O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I O I
 @KS #t /////////////////////////t K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0 K0
-/keccakf KS
