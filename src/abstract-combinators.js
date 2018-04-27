@@ -14,7 +14,7 @@ function newNet(nodes) {
   return {
     nodes: nodes || [],
     reuse: [],
-    stats: {}
+    stats: {loops:0, rules:0, betas:0, dupls:0, annis:0}
   };
 }
 
@@ -49,8 +49,6 @@ function link(net, a, b) {
 }
 
 function reduce(net) {
-  net.stats = {loops:0, rules:0, betas:0, dupls:0, annis:0};
-  net.reuse = [];
   var next = net.nodes[0];
   var prev, back;
   while (next > 0) {
