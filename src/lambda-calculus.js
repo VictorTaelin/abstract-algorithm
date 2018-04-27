@@ -8,7 +8,7 @@ const fromString = src => {
   var i = 0;
   var parseString = (name) => {
     var str = "";
-    while (src[i] && (name ? !/[ \n]/.test(src[i]) : src[i] !== ")")) {
+    while (src[i] && (name ? !/[\r|\n| ]/.test(src[i]) : src[i] !== ")")) {
       str += src[i++];
     }
     return str;
@@ -19,8 +19,7 @@ const fromString = src => {
   var parseTerm = (ctx, nofv) => {
     switch (src[i++]) {
       case ' ':
-      case ' ':
-        return parseTerm(ctx, nofv);
+      case '\r':
       case '\n':
         return parseTerm(ctx, nofv);
       case '#':
