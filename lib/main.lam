@@ -352,4 +352,4 @@
   //List.con Bool.true
   List.nil
 
-/List.id //256b /List.fmap Bool.not xs
+/List.id ///8 2 /List.fmap Bool.not xs

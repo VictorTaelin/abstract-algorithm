@@ -1,4 +1,4 @@
-const I = require("./interaction-combinators.js");
+const I = require("./abstract-combinators.js");
 
 const Var = (idx)      => ({tag: "Var", idx});
 const Lam = (bod)      => ({tag: "Lam", bod});
@@ -79,48 +79,48 @@ const toString = (term, bruijn) => {
 
 const toNet = term => {
   var kind = 1;
-  var mem = [0, 1, 2, 0];
+  var net = I.newNet([0, 1, 2, 0]);
   var ptr = (function encode(term, scope){
     switch (term.tag){
       case "Lam": 
-        var fun = I.newNode(mem,1);
-        var era = I.newNode(mem,0);
-        I.link(mem, I.port(fun,1), I.port(era,0));
-        I.link(mem, I.port(era,1), I.port(era,2));
+        var fun = I.newNode(net,1);
+        var era = I.newNode(net,0);
+        I.link(net, I.port(fun,1), I.port(era,0));
+        I.link(net, I.port(era,1), I.port(era,2));
         var bod = encode(term.bod, [fun].concat(scope));
-        I.link(mem, I.port(fun,2), bod);
+        I.link(net, I.port(fun,2), bod);
         return I.port(fun,0);
       case "App":
-        var app = I.newNode(mem,1);
+        var app = I.newNode(net,1);
         var fun = encode(term.fun, scope);
-        I.link(mem, I.port(app,0), fun);
+        I.link(net, I.port(app,0), fun);
         var arg = encode(term.arg, scope);
-        I.link(mem, I.port(app,1), arg);
+        I.link(net, I.port(app,1), arg);
         return I.port(app,2);
       case "Var":
         var lam = scope[term.idx];
-        if (I.getNodeKind(mem,I.getPortNode(I.enterPort(mem,I.port(lam,1)))) === 0) {
+        if (I.getNodeKind(net,I.getPortNode(I.enterPort(net,I.port(lam,1)))) === 0) {
           return I.port(lam,1);
         } else {
-          var dup = I.newNode(mem, ++kind);
-          var arg = I.enterPort(mem, I.port(lam,1));
-          I.link(mem, I.port(dup,1), I.enterPort(mem,I.port(lam,1)));
-          I.link(mem, I.port(dup,0), I.port(lam,1));
+          var dup = I.newNode(net, ++kind);
+          var arg = I.enterPort(net, I.port(lam,1));
+          I.link(net, I.port(dup,1), I.enterPort(net,I.port(lam,1)));
+          I.link(net, I.port(dup,0), I.port(lam,1));
           return I.port(dup,2);
         }
     };
   })(term, []);
-  I.link(mem, 0, ptr);
-  return mem;
+  I.link(net, 0, ptr);
+  return net;
 };
 
-const fromNet = mem => {
+const fromNet = net => {
   var nodeDepth = {};
   return (function go(next, exit, depth){
-    var prev = I.enterPort(mem, next);
+    var prev = I.enterPort(net, next);
     var prevPort = I.getPortSlot(prev);
     var prevNode = I.getPortNode(prev);
-    if (I.getNodeKind(mem, prevNode) === 1) {
+    if (I.getNodeKind(net, prevNode) === 1) {
       switch (prevPort) {
         case 0:
           nodeDepth[prevNode] = depth;
@@ -137,7 +137,7 @@ const fromNet = mem => {
       var port = prevPort > 0 ? {head: prevPort, tail: exit} : exit.tail;
       return go(wire, port, depth);
     }
-  })(mem[1], null, 0);
+  })(0, null, 0);
 };
 
 const reduce = (src, returnStats, bruijn) => {
