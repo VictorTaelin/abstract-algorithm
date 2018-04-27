@@ -64,8 +64,7 @@ const toString = (term, bruijn) => {
     const suc = c => String.fromCharCode(c.charCodeAt(0) + 1);
     const inc = s => !s ? "a" : s[0] === "z" ? "a" + inc(s.slice(1)) : suc(s) + s.slice(1);
     return n === 0 ? "a" : inc(varName(n - 1));
-  }
-  ;
+  };
   const go = (term, dph) => {
     switch (term.tag) {
       case "Var":
@@ -81,63 +80,65 @@ const toString = (term, bruijn) => {
 
 const toNet = term => {
   var kind = 1;
-  var m = [];
-  return {mem: m, ptr: (function encode(term, scope){
+  var mem = [0, 1, 2, 0];
+  var ptr = (function encode(term, scope){
     switch (term.tag){
       case "Lam": 
-        var fun = I.Node(m,1);
-        var era = I.Node(m,0);
-        I.link(m, I.Wire(fun,1), I.Wire(era,0));
-        I.link(m, I.Wire(era,1), I.Wire(era,2));
+        var fun = I.newNode(mem,1);
+        var era = I.newNode(mem,0);
+        I.link(mem, I.port(fun,1), I.port(era,0));
+        I.link(mem, I.port(era,1), I.port(era,2));
         var bod = encode(term.bod, [fun].concat(scope));
-        I.link(m, I.Wire(fun,2), bod);
-        return I.Wire(fun,0);
+        I.link(mem, I.port(fun,2), bod);
+        return I.port(fun,0);
       case "App":
-        var app = I.Node(m,1);
+        var app = I.newNode(mem,1);
         var fun = encode(term.fun, scope);
-        I.link(m, I.Wire(app,0), fun);
+        I.link(mem, I.port(app,0), fun);
         var arg = encode(term.arg, scope);
-        I.link(m, I.Wire(app,1), arg);
-        return I.Wire(app,2);
+        I.link(mem, I.port(app,1), arg);
+        return I.port(app,2);
       case "Var":
         var lam = scope[term.idx];
-        if (I.kind(m,I.node(I.flip(m,I.Wire(lam,1)))) === 0) {
-          return I.Wire(lam,1);
+        if (I.getNodeKind(mem,I.getPortNode(I.enterPort(mem,I.port(lam,1)))) === 0) {
+          return I.port(lam,1);
         } else {
-          var dup = I.Node(m, ++kind);
-          var arg = I.flip(m, I.Wire(lam,1));
-          I.link(m,I.Wire(dup,1), I.flip(m,I.Wire(lam,1)));
-          I.link(m,I.Wire(dup,0), I.Wire(lam,1));
-          return I.Wire(dup,2);
+          var dup = I.newNode(mem, ++kind);
+          var arg = I.enterPort(mem, I.port(lam,1));
+          I.link(mem, I.port(dup,1), I.enterPort(mem,I.port(lam,1)));
+          I.link(mem, I.port(dup,0), I.port(lam,1));
+          return I.port(dup,2);
         }
     };
-  })(term, [])};
+  })(term, []);
+  I.link(mem, 0, ptr);
+  return mem;
 };
 
-const fromNet = net => {
+const fromNet = mem => {
   var nodeDepth = {};
   return (function go(next, exit, depth){
-    var prev = I.flip(net.mem, next);
-    var prevPort = I.port(prev);
-    var prevNode = I.node(prev);
-    if (I.kind(net.mem, prevNode) === 1) {
+    var prev = I.enterPort(mem, next);
+    var prevPort = I.getPortSlot(prev);
+    var prevNode = I.getPortNode(prev);
+    if (I.getNodeKind(mem, prevNode) === 1) {
       switch (prevPort) {
         case 0:
           nodeDepth[prevNode] = depth;
-          return Lam(go(I.Wire(prevNode,2), exit, depth + 1));
+          return Lam(go(I.port(prevNode,2), exit, depth + 1));
         case 1:
           return Var(depth - nodeDepth[prevNode] - 1);
         case 2:
-          var fun = go(I.Wire(prevNode,0), exit, depth);
-          var arg = go(I.Wire(prevNode,1), exit, depth);
+          var fun = go(I.port(prevNode,0), exit, depth);
+          var arg = go(I.port(prevNode,1), exit, depth);
           return App(fun, arg);
       }
     } else {
-      var wire = I.Wire(prevNode, prevPort > 0 ? 0 : exit.head);
+      var wire = I.port(prevNode, prevPort > 0 ? 0 : exit.head);
       var port = prevPort > 0 ? {head: prevPort, tail: exit} : exit.tail;
       return go(wire, port, depth);
     }
-  })(net.ptr, null, 0);
+  })(mem[1], null, 0);
 };
 
 const reduce = (src, returnStats, bruijn) => {

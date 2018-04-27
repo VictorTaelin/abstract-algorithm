@@ -1,6 +1,6 @@
 {
   "name": "abstract-algorithm",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Abstract-algorithm for optional reduction of stratifiable lambda terms",
   "main": "src/lambda-calculus.js",
   "bin": {

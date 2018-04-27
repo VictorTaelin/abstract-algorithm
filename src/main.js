@@ -23,8 +23,8 @@ try {
   console.log("  @four #f #x /f /f /f /f x");
   console.log("  /four four");
   console.log("Stats:");
-  console.log("  - loops: how many times the main loop was executed");
-  console.log("  - rewrites : total graph rewrites (dupls + annis)");
+  console.log("  - loops    : how many times the main loop was executed");
+  console.log("  - rules    : total graph rewrites (dupls + annis)");
   console.log("    - dupls  : different color rewrites (duplications)");
   console.log("    - annis  : equal color rewrites (annihilations)");
   console.log("    - betas  : annis with color=0 (lam/app nodes)");
@@ -37,10 +37,10 @@ var result = L.reduce(`${base} ${code}`, 1, bruijn);
 console.log(result.term);
 if (stats) {
   console.log("");
-  console.log("- time     : " + ((Date.now() - start) / 1000) + "s");
-  console.log("- loops    : " + result.stats.loops);
-  console.log("- rewrites : " + result.stats.rewrites);
-  console.log("  - dupls  : " + result.stats.dupls);
-  console.log("  - annis  : " + result.stats.annis);
-  console.log("  - betas  : " + result.stats.betas);
+  console.log("- time    : " + ((Date.now() - start) / 1000) + "s");
+  console.log("- loops   : " + result.stats.loops);
+  console.log("- rules   : " + result.stats.rules);
+  console.log("  - dupls : " + result.stats.dupls);
+  console.log("  - annis : " + result.stats.annis);
+  console.log("  - betas : " + result.stats.betas);
 }
