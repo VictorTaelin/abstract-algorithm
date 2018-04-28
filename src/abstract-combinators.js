@@ -73,36 +73,40 @@ function reduce(net) {
   return net;
 }
 
-function rewrite(net, x, y) {
-  if (kind(net,x) === kind(net,y)) {
+function rewrite(net, A, B) {
+  if (kind(net,A) === kind(net,B)) {
     //  1          2            1   2
     //   \        /              \ / 
     //     A == B       -->       X  
     //   /        \              / \ 
     //  2          1            2   1
-    link(net, enterPort(net, port(x, 1)),  enterPort(net, port(y, 1)));
-    link(net, enterPort(net, port(x, 2)),  enterPort(net, port(y, 2)));
-    net.stats.betas += kind(net, x) === 1 ? 1 : 0;
+    link(net, enterPort(net, port(A, 1)),  enterPort(net, port(B, 1)));
+    link(net, enterPort(net, port(A, 2)),  enterPort(net, port(B, 2)));
+    net.stats.betas += kind(net, A) === 1 ? 1 : 0;
     net.stats.annis += 1;
+    net.reuse.push(A, B);
   } else {
     //  1          2       1 = B --- A = 2
     //   \        /              \ /   
     //     A == B     -->         X    
     //   /        \              / \  
     //  2          1       2 = B --- A = 1 
-    var x1 = newNode(net, kind(net, x)), x2 = newNode(net, kind(net, x));
-    var y1 = newNode(net, kind(net, y)), y2 = newNode(net, kind(net, y));
-    link(net, enterPort(net, port(y1, 0)), enterPort(net, port(x, 1)));
-    link(net, enterPort(net, port(y2, 0)), enterPort(net, port(x, 2)));
-    link(net, enterPort(net, port(x1, 0)), enterPort(net, port(y, 1)));
-    link(net, enterPort(net, port(x2, 0)), enterPort(net, port(y, 2)));
-    link(net, enterPort(net, port(x1, 1)), enterPort(net, port(y1, 1)));
-    link(net, enterPort(net, port(x1, 2)), enterPort(net, port(y2, 1)));
-    link(net, enterPort(net, port(x2, 1)), enterPort(net, port(y1, 2)));
-    link(net, enterPort(net, port(x2, 2)), enterPort(net, port(y2, 2)));
+    var a = newNode(net, kind(net, A));
+    var b = newNode(net, kind(net, B));
+    
+    link(net, port(b, 0), enterPort(net, port(A, 1)));
+    link(net, port(B, 0), enterPort(net, port(A, 2)));
+    link(net, port(a, 0), enterPort(net, port(B, 1)));
+    link(net, port(A, 0), enterPort(net, port(B, 2)));
+    link(net, port(a, 1), port(b, 1));
+    link(net, port(a, 2), port(B, 1));
+    link(net, port(A, 1), port(b, 2));
+    link(net, port(A, 2), port(B, 2));
+
+    setMeta(net, A, 0);
+    setMeta(net, B, 0);
     net.stats.dupls += 1;
   }
-  net.reuse.push(x, y);
   net.stats.rules += 1;
 }
 
