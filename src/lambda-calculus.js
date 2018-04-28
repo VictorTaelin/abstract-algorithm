@@ -99,7 +99,7 @@ const toNet = term => {
         return I.port(app,2);
       case "Var":
         var lam = scope[term.idx];
-        if (I.getNodeKind(net,I.getPortNode(I.enterPort(net,I.port(lam,1)))) === 0) {
+        if (I.kind(net,I.node(I.enterPort(net,I.port(lam,1)))) === 0) {
           return I.port(lam,1);
         } else {
           var dup = I.newNode(net, ++kind);
@@ -118,9 +118,9 @@ const fromNet = net => {
   var nodeDepth = {};
   return (function go(next, exit, depth){
     var prev = I.enterPort(net, next);
-    var prevPort = I.getPortSlot(prev);
-    var prevNode = I.getPortNode(prev);
-    if (I.getNodeKind(net, prevNode) === 1) {
+    var prevPort = I.slot(prev);
+    var prevNode = I.node(prev);
+    if (I.kind(net, prevNode) === 1) {
       switch (prevPort) {
         case 0:
           nodeDepth[prevNode] = depth;
