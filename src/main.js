@@ -8,6 +8,7 @@ try {
   var args = [].slice.call(process.argv, 2);
   var stats = args.indexOf("-s") !== -1 || args.indexOf("--stats") !== -1;
   var bruijn = args.indexOf("-b") !== -1 || args.indexOf("--bruijn") !== -1;
+  var dump = args.indexOf("-d") !== -1 || args.indexOf("--dump") !== -1;
   var file = args[args.length - 1];
   var base = fs.readFileSync(path.join(__dirname, "..", "lib", "base.lam"), "utf8");
   var code = fs.readFileSync("./" + (file.indexOf(".") === -1 ? file + ".lam" : file), "utf8");
@@ -32,7 +33,7 @@ try {
 }
 
 var start = Date.now();
-var result = L.reduce(`${base} ${code}`, 1, bruijn);
+var result = L.reduce(`${base} ${code}`, 1, bruijn, dump);
 
 console.log(result.term);
 if (stats) {

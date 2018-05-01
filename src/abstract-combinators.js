@@ -110,6 +110,18 @@ function rewrite(net, A, B) {
   net.stats.rules += 1;
 }
 
+function show(net) {
+  console.log(net.stats);
+  for (var i=0; i < net.nodes.length;i+=4) {
+    if (net.reuse.some(x => x === i>>2)) {
+      console.log(i>>2);
+      continue;
+    }
+    [a,b,c,d] = net.nodes.slice(i, i+3)
+    console.log(i>>2, `${a>>2}:${a&3} ${b>>2}:${b&3} ${c>>2}:${c&3} ${d>>2}:${d&3}`);
+  }
+}
+
 module.exports = {
   port,
   node,
@@ -122,5 +134,6 @@ module.exports = {
   setMeta,
   link,
   reduce,
-  rewrite
+  rewrite,
+  show
 };
