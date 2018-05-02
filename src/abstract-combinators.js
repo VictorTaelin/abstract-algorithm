@@ -19,11 +19,11 @@ function newNet(nodes) {
 }
 
 function newNode(net, kind) {
-  var node = net.reuse.pop() || (net.nodes.length / 4);
+  var node = net.reuse.pop() || (net.nodes.length >> 2);
   net.nodes[node * 4 + 0] = node * 4 + 0;
   net.nodes[node * 4 + 1] = node * 4 + 1;
   net.nodes[node * 4 + 2] = node * 4 + 2;
-  net.nodes[node * 4 + 3] = kind << 2;
+  net.nodes[node * 4 + 3] = kind * 4;
   return node;
 }
 
@@ -117,7 +117,7 @@ function show(net) {
       console.log(i>>2);
       continue;
     }
-    [a,b,c,d] = net.nodes.slice(i, i+3)
+    [a,b,c,d] = net.nodes.slice(i, i+4)
     console.log(i>>2, `${a>>2}:${a&3} ${b>>2}:${b&3} ${c>>2}:${c&3} ${d>>2}:${d&3}`);
   }
 }
