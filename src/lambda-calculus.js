@@ -81,7 +81,19 @@ const toNet = term => {
   var kind = 1;
   var net = I.newNet([0, 1, 2, 0]);
   var ptr = (function encode(term, scope){
-    switch (term.tag){        
+    switch (term.tag){
+      // Arg
+      //    \
+      //     App = Fun
+      //    /
+      // Ret
+      case "App":
+        var app = I.newNode(net,1);
+        var fun = encode(term.fun, scope);
+        I.link(net, I.port(app,0), fun);
+        var arg = encode(term.arg, scope);
+        I.link(net, I.port(app,1), arg);
+        return I.port(app,2);
       // Era =- Fun = Ret  
       //         |     
       //        Bod  
@@ -95,26 +107,15 @@ const toNet = term => {
         return I.port(fun,0);
       // Arg
       //    \
-      //     App = Fun
-      //    /
-      // Ret
-      case "App":
-        var app = I.newNode(net,1);
-        var fun = encode(term.fun, scope);
-        I.link(net, I.port(app,0), fun);
-        var arg = encode(term.arg, scope);
-        I.link(net, I.port(app,1), arg);
-        return I.port(app,2);
-      // Arg
-      //    \
       //     Dup =- Fun      Ret - Era
       //    /
       // Ret
       case "Var":
         var lam = scope[term.idx];
         var arg = I.enterPort(net, I.port(lam,1));
-        if (I.kind(net,I.node(arg)) === 0) {
-          return I.port(lam,1);
+        if (I.kind(net, I.node(arg)) === 0) {
+          net.reuse.push(I.node(arg));
+          return I.port(lam, 1);
         } else {
           var dup = I.newNode(net, ++kind);
           I.link(net, I.port(dup,1), arg);
