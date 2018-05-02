@@ -2,11 +2,11 @@ function port(node, slot) {
   return (node << 2) | slot;
 }
 
-function getPortNode(port) {
+function node(port) {
   return port >>> 2;
 }
 
-function getPortSlot(port) {
+function slot(port) {
   return port & 3;
 }
 
@@ -19,11 +19,11 @@ function newNet(nodes) {
 }
 
 function newNode(net, kind) {
-  var node = net.reuse.pop() || (net.nodes.length / 4);
+  var node = net.reuse.pop() || (net.nodes.length >> 2);
   net.nodes[node * 4 + 0] = node * 4 + 0;
   net.nodes[node * 4 + 1] = node * 4 + 1;
   net.nodes[node * 4 + 2] = node * 4 + 2;
-  net.nodes[node * 4 + 3] = kind << 2;
+  net.nodes[node * 4 + 3] = kind * 4;
   return node;
 }
 
@@ -31,15 +31,15 @@ function enterPort(net, w) {
   return net.nodes[w];
 }
 
-function getNodeKind(net, node) {
+function kind(net, node) {
   return net.nodes[node * 4 + 3] >>> 2;
 }
 
-function getNodeMeta(net, node) {
+function meta(net, node) {
   return (net.nodes[node * 4 + 3] >>> 0) & 3;
 }
 
-function setNodeMeta(net, node, meta) {
+function setMeta(net, node, meta) {
   return net.nodes[node * 4 + 3] = net.nodes[node * 4 + 3] & 0xFFFFFFFC | meta;
 }
 
@@ -54,69 +54,86 @@ function reduce(net) {
   while (next > 0) {
     prev = enterPort(net, next);
     next = enterPort(net, prev);
-    if (getPortSlot(next) === 0) {
-      if (getPortSlot(prev) === 0 && getPortNode(prev) !== 0) {
-        back = enterPort(net, port(getPortNode(prev), getNodeMeta(net, getPortNode(prev))));
-        rewrite(net, getPortNode(prev), getPortNode(next), net.stats);
+    if (slot(next) === 0) {
+      if (slot(prev) === 0 && node(prev) !== 0) {
+        back = enterPort(net, port(node(prev), meta(net, node(prev))));
+        rewrite(net, node(prev), node(next), net.stats);
         next = enterPort(net, back);
       } else {
-        setNodeMeta(net, getPortNode(next), 1);
-        next = enterPort(net, port(getPortNode(next), 1));
+        setMeta(net, node(next), 1);
+        next = enterPort(net, port(node(next), 1));
       }
     } else {
-      var meta = getNodeMeta(net, getPortNode(next));
-      setNodeMeta(net, getPortNode(next), meta === 0 ? getPortSlot(next) : meta + 1);
-      next = enterPort(net, port(getPortNode(next), meta === 1 ? 2 : 0));
+      var metaNext = meta(net, node(next));
+      setMeta(net, node(next), metaNext === 0 ? slot(next) : metaNext + 1);
+      next = enterPort(net, port(node(next), metaNext === 1 ? 2 : 0));
     }
     ++net.stats.loops;
   }
   return net;
 }
 
-function rewrite(net, x, y) {
-  if (getNodeKind(net,x) === getNodeKind(net,y)) {
-    //  a          b            a   b
+function rewrite(net, A, B) {
+  if (kind(net,A) === kind(net,B)) {
+    //  1          2            1   2
     //   \        /              \ / 
-    //     A -- B       -->       X  
+    //     A == B       -->       X  
     //   /        \              / \ 
-    //  c          d            c   d
-    link(net, enterPort(net, port(x, 1)),  enterPort(net, port(y, 1)));
-    link(net, enterPort(net, port(x, 2)),  enterPort(net, port(y, 2)));
-    net.stats.betas += getNodeKind(net, x) === 1 ? 1 : 0;
+    //  2          1            2   1
+    link(net, enterPort(net, port(A, 1)),  enterPort(net, port(B, 1)));
+    link(net, enterPort(net, port(A, 2)),  enterPort(net, port(B, 2)));
+    net.stats.betas += kind(net, A) === 1 ? 1 : 0;
     net.stats.annis += 1;
+    net.reuse.push(A, B);
   } else {
-    //  a          d       a - B --- A - d
+    //  1          2       1 = B --- A = 2
     //   \        /              \ /   
-    //     A -- B     -->         X    
+    //     A == B     -->         X    
     //   /        \              / \  
-    //  b          c       b - B --- A - c 
-    var x1 = newNode(net, getNodeKind(net, x)), x2 = newNode(net, getNodeKind(net, x));
-    var y1 = newNode(net, getNodeKind(net, y)), y2 = newNode(net, getNodeKind(net, y));
-    link(net, enterPort(net, port(y1, 0)), enterPort(net, port(x, 1)));
-    link(net, enterPort(net, port(y2, 0)), enterPort(net, port(x, 2)));
-    link(net, enterPort(net, port(x1, 0)), enterPort(net, port(y, 1)));
-    link(net, enterPort(net, port(x2, 0)), enterPort(net, port(y, 2)));
-    link(net, enterPort(net, port(x1, 1)), enterPort(net, port(y1, 1)));
-    link(net, enterPort(net, port(x1, 2)), enterPort(net, port(y2, 1)));
-    link(net, enterPort(net, port(x2, 1)), enterPort(net, port(y1, 2)));
-    link(net, enterPort(net, port(x2, 2)), enterPort(net, port(y2, 2)));
+    //  2          1       2 = B --- A = 1 
+    var a = newNode(net, kind(net, A));
+    var b = newNode(net, kind(net, B));
+    
+    link(net, port(b, 0), enterPort(net, port(A, 1)));
+    link(net, port(B, 0), enterPort(net, port(A, 2)));
+    link(net, port(a, 0), enterPort(net, port(B, 1)));
+    link(net, port(A, 0), enterPort(net, port(B, 2)));
+    link(net, port(a, 1), port(b, 1));
+    link(net, port(a, 2), port(B, 1));
+    link(net, port(A, 1), port(b, 2));
+    link(net, port(A, 2), port(B, 2));
+
+    setMeta(net, A, 0);
+    setMeta(net, B, 0);
     net.stats.dupls += 1;
   }
-  net.reuse.push(x, y);
   net.stats.rules += 1;
+}
+
+function show(net) {
+  console.log(net.stats);
+  for (var i=0; i < net.nodes.length;i+=4) {
+    if (net.reuse.some(x => x === i>>2)) {
+      console.log(i>>2);
+      continue;
+    }
+    [a,b,c,d] = net.nodes.slice(i, i+4)
+    console.log(i>>2, `${a>>2}:${a&3} ${b>>2}:${b&3} ${c>>2}:${c&3} ${d>>2}:${d&3}`);
+  }
 }
 
 module.exports = {
   port,
-  getPortNode,
-  getPortSlot,
+  node,
+  slot,
   newNet,
   newNode,
   enterPort,
-  getNodeKind,
-  getNodeMeta,
-  setNodeMeta,
+  kind,
+  meta,
+  setMeta,
   link,
   reduce,
-  rewrite
+  rewrite,
+  show
 };

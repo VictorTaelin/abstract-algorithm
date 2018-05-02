@@ -82,6 +82,11 @@ const toNet = term => {
   var net = I.newNet([0, 1, 2, 0]);
   var ptr = (function encode(term, scope){
     switch (term.tag){
+      // Arg
+      //    \
+      //     App = Fun
+      //    /
+      // Ret
       case "App":
         var app = I.newNode(net,1);
         var fun = encode(term.fun, scope);
@@ -89,6 +94,9 @@ const toNet = term => {
         var arg = encode(term.arg, scope);
         I.link(net, I.port(app,1), arg);
         return I.port(app,2);
+      // Era =- Fun = Ret  
+      //         |     
+      //        Bod  
       case "Lam": 
         var fun = I.newNode(net,1);
         var era = I.newNode(net,0);
@@ -97,11 +105,16 @@ const toNet = term => {
         var bod = encode(term.bod, [fun].concat(scope));
         I.link(net, I.port(fun,2), bod);
         return I.port(fun,0);
+      // Arg
+      //    \
+      //     Dup =- Fun      Ret - Era
+      //    /
+      // Ret
       case "Var":
         var lam = scope[term.idx];
         var arg = I.enterPort(net, I.port(lam,1));
-        if (I.getNodeKind(net, I.getPortNode(arg)) === 0) {
-          net.reuse.push(I.getPortNode(arg));
+        if (I.kind(net, I.node(arg)) === 0) {
+          net.reuse.push(I.node(arg));
           return I.port(lam, 1);
         } else {
           var dup = I.newNode(net, ++kind);
@@ -119,9 +132,9 @@ const fromNet = net => {
   var nodeDepth = {};
   return (function go(next, exit, depth){
     var prev = I.enterPort(net, next);
-    var prevPort = I.getPortSlot(prev);
-    var prevNode = I.getPortNode(prev);
-    if (I.getNodeKind(net, prevNode) === 1) {
+    var prevPort = I.slot(prev);
+    var prevNode = I.node(prev);
+    if (I.kind(net, prevNode) === 1) {
       switch (prevPort) {
         case 0:
           nodeDepth[prevNode] = depth;
@@ -141,8 +154,11 @@ const fromNet = net => {
   })(0, null, 0);
 };
 
-const reduce = (src, returnStats, bruijn) => {
+const reduce = (src, returnStats, bruijn, dump) => {
   const reduced = I.reduce(toNet(fromString(src)));
+  if(dump) {
+    I.show(reduced);
+  }
   if (returnStats) {
     return {term: toString(fromNet(reduced), bruijn), stats: reduced.stats};
   } else {
