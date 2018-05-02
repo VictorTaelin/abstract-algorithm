@@ -82,6 +82,13 @@ const toNet = term => {
   var net = I.newNet([0, 1, 2, 0]);
   var ptr = (function encode(term, scope){
     switch (term.tag){
+      case "App":
+        var app = I.newNode(net,1);
+        var fun = encode(term.fun, scope);
+        I.link(net, I.port(app,0), fun);
+        var arg = encode(term.arg, scope);
+        I.link(net, I.port(app,1), arg);
+        return I.port(app,2);
       case "Lam": 
         var fun = I.newNode(net,1);
         var era = I.newNode(net,0);
@@ -90,21 +97,15 @@ const toNet = term => {
         var bod = encode(term.bod, [fun].concat(scope));
         I.link(net, I.port(fun,2), bod);
         return I.port(fun,0);
-      case "App":
-        var app = I.newNode(net,1);
-        var fun = encode(term.fun, scope);
-        I.link(net, I.port(app,0), fun);
-        var arg = encode(term.arg, scope);
-        I.link(net, I.port(app,1), arg);
-        return I.port(app,2);
       case "Var":
         var lam = scope[term.idx];
-        if (I.getNodeKind(net,I.getPortNode(I.enterPort(net,I.port(lam,1)))) === 0) {
-          return I.port(lam,1);
+        var arg = I.enterPort(net, I.port(lam,1));
+        if (I.getNodeKind(net, I.getPortNode(arg)) === 0) {
+          net.reuse.push(I.getPortNode(arg));
+          return I.port(lam, 1);
         } else {
           var dup = I.newNode(net, ++kind);
-          var arg = I.enterPort(net, I.port(lam,1));
-          I.link(net, I.port(dup,1), I.enterPort(net,I.port(lam,1)));
+          I.link(net, I.port(dup,1), arg);
           I.link(net, I.port(dup,0), I.port(lam,1));
           return I.port(dup,2);
         }
