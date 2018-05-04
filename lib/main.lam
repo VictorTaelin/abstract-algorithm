@@ -352,4 +352,4 @@
   //List.con Bool.true
   List.nil
 
-/Bits.id ///8 2 /Bits.mul Bits.rnd32.a Bits.rnd32.b
+/Bits.id ///4 2 /Bits.mul Bits.rnd32.a Bits.rnd32.b

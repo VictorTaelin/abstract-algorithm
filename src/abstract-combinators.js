@@ -129,6 +129,5 @@ module.exports = {
   setMeta,
   link,
   reduce,
-  rewrite,
-  show
+  rewrite
 };

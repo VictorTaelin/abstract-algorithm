@@ -154,11 +154,8 @@ const fromNet = net => {
   })(0, null, 0);
 };
 
-const reduce = (src, returnStats, bruijn, dump) => {
+const reduce = (src, returnStats, bruijn) => {
   const reduced = I.reduce(toNet(fromString(src)));
-  if(dump) {
-    I.show(reduced);
-  }
   if (returnStats) {
     return {term: toString(fromNet(reduced), bruijn), stats: reduced.stats};
   } else {
