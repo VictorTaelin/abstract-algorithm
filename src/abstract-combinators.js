@@ -50,23 +50,30 @@ function link(net, a, b) {
 
 function reduce(net) {
   var next = net.nodes[0];
-  var prev, back;
+  var prev, back, nextMeta, nextSlot;
+  var i = 0;
   while (next > 0) {
     prev = enterPort(net, next);
     next = enterPort(net, prev);
-    if (slot(next) === 0) {
-      if (slot(prev) === 0 && node(prev) !== 0) {
-        back = enterPort(net, port(node(prev), meta(net, node(prev))));
-        rewrite(net, node(prev), node(next), net.stats);
-        next = enterPort(net, back);
-      } else {
-        setMeta(net, node(next), 1);
-        next = enterPort(net, port(node(next), 1));
-      }
+    ++i;
+    if (slot(next) === 0 && slot(prev) === 0 && node(prev) !== 0) {
+      back = enterPort(net, port(node(prev), meta(net, node(prev))));
+      rewrite(net, node(prev), node(next), net.stats);
+      next = enterPort(net, back);
     } else {
-      var metaNext = meta(net, node(next));
-      setMeta(net, node(next), metaNext === 0 ? slot(next) : metaNext + 1);
-      next = enterPort(net, port(node(next), metaNext === 1 ? 2 : 0));
+      switch (slot(next) * 3 + meta(net, node(next))) {
+        case 0 * 3 + 0: nextSlot = 1; nextMeta = 1; break;
+        case 0 * 3 + 1: nextSlot = 2; nextMeta = 2; break;
+        case 0 * 3 + 2: nextSlot = 1; nextMeta = 1; break;
+        case 1 * 3 + 0: nextSlot = 0; nextMeta = 1; break;
+        case 1 * 3 + 1: nextSlot = 2; nextMeta = 2; break;
+        case 1 * 3 + 2: nextSlot = 0; nextMeta = 3; break;
+        case 2 * 3 + 0: nextSlot = 0; nextMeta = 2; break;
+        case 2 * 3 + 1: nextSlot = 2; nextMeta = 2; break;
+        case 2 * 3 + 2: nextSlot = 0; nextMeta = 3; break;
+      }
+      setMeta(net, node(next), nextMeta);
+      next = enterPort(net, port(node(next), nextSlot));
     }
     ++net.stats.loops;
   }
@@ -108,18 +115,6 @@ function rewrite(net, A, B) {
     net.stats.dupls += 1;
   }
   net.stats.rules += 1;
-}
-
-function show(net) {
-  console.log(net.stats);
-  for (var i=0; i < net.nodes.length;i+=4) {
-    if (net.reuse.some(x => x === i>>2)) {
-      console.log(i>>2);
-      continue;
-    }
-    [a,b,c,d] = net.nodes.slice(i, i+4)
-    console.log(i>>2, `${a>>2}:${a&3} ${b>>2}:${b&3} ${c>>2}:${c&3} ${d>>2}:${d&3}`);
-  }
 }
 
 module.exports = {
