@@ -102,7 +102,7 @@ const toNet = term => {
         var era = I.newNode(net,0);
         I.link(net, I.port(fun,1), I.port(era,0));
         I.link(net, I.port(era,1), I.port(era,2));
-        var bod = encode(term.bod, [fun].concat(scope));
+        var bod = encode(term.bod, [[fun,++kind]].concat(scope));
         I.link(net, I.port(fun,2), bod);
         return I.port(fun,0);
       // Arg
@@ -111,16 +111,16 @@ const toNet = term => {
       //    /
       // Ret
       case "Var":
-        var lam = scope[term.idx];
+        var [lam,kin] = scope[term.idx];
         var arg = I.enterPort(net, I.port(lam,1));
         if (I.kind(net, I.node(arg)) === 0) {
           net.reuse.push(I.node(arg));
           return I.port(lam, 1);
         } else {
-          var dup = I.newNode(net, ++kind);
-          I.link(net, I.port(dup,1), arg);
+          var dup = I.newNode(net, kin);
+          I.link(net, I.port(dup,2), arg);
           I.link(net, I.port(dup,0), I.port(lam,1));
-          return I.port(dup,2);
+          return I.port(dup,1);
         }
     };
   })(term, []);

@@ -19,11 +19,11 @@ function newNet(nodes) {
 }
 
 function newNode(net, kind) {
-  var node = net.reuse.pop() || (net.nodes.length >> 2);
+  var node = net.reuse.pop() || (net.nodes.length / 4);
   net.nodes[node * 4 + 0] = node * 4 + 0;
   net.nodes[node * 4 + 1] = node * 4 + 1;
   net.nodes[node * 4 + 2] = node * 4 + 2;
-  net.nodes[node * 4 + 3] = kind * 4;
+  net.nodes[node * 4 + 3] = kind << 2;
   return node;
 }
 
@@ -35,12 +35,12 @@ function kind(net, node) {
   return net.nodes[node * 4 + 3] >>> 2;
 }
 
-function meta(net, node) {
+function exit(net, node) {
   return (net.nodes[node * 4 + 3] >>> 0) & 3;
 }
 
-function setMeta(net, node, meta) {
-  return net.nodes[node * 4 + 3] = net.nodes[node * 4 + 3] & 0xFFFFFFFC | meta;
+function setExit(net, node, exit) {
+  return net.nodes[node * 4 + 3] = net.nodes[node * 4 + 3] & 0xFFFFFFFC | exit;
 }
 
 function link(net, a, b) {
@@ -49,31 +49,24 @@ function link(net, a, b) {
 }
 
 function reduce(net) {
+  var prev, back;
+  var warp = [];
   var next = net.nodes[0];
-  var prev, back, nextMeta, nextSlot;
-  var i = 0;
-  while (next > 0) {
+  while (next || warp.length) {
+    next = next || enterPort(net, port(warp.pop(), 2));
     prev = enterPort(net, next);
     next = enterPort(net, prev);
-    ++i;
-    if (slot(next) === 0 && slot(prev) === 0 && node(prev) !== 0) {
-      back = enterPort(net, port(node(prev), meta(net, node(prev))));
+    if (slot(next) === 0 && slot(prev) === 0 && node(prev)) {
+      back = enterPort(net, port(node(prev), exit(net, node(prev))));
       rewrite(net, node(prev), node(next), net.stats);
       next = enterPort(net, back);
+    } else if (slot(next) === 0) {
+      warp.push(node(next));
+      next = enterPort(net, port(node(next), 1));
+      setExit(net, node(next), 3); 
     } else {
-      switch (slot(next) * 3 + meta(net, node(next))) {
-        case 0 * 3 + 0: nextSlot = 1; nextMeta = 1; break;
-        case 0 * 3 + 1: nextSlot = 2; nextMeta = 2; break;
-        case 0 * 3 + 2: nextSlot = 1; nextMeta = 1; break;
-        case 1 * 3 + 0: nextSlot = 0; nextMeta = 1; break;
-        case 1 * 3 + 1: nextSlot = 2; nextMeta = 2; break;
-        case 1 * 3 + 2: nextSlot = 0; nextMeta = 3; break;
-        case 2 * 3 + 0: nextSlot = 0; nextMeta = 2; break;
-        case 2 * 3 + 1: nextSlot = 2; nextMeta = 2; break;
-        case 2 * 3 + 2: nextSlot = 0; nextMeta = 3; break;
-      }
-      setMeta(net, node(next), nextMeta);
-      next = enterPort(net, port(node(next), nextSlot));
+      setExit(net, node(next), slot(next));
+      next = enterPort(net, port(node(next), 0));
     }
     ++net.stats.loops;
   }
@@ -100,7 +93,6 @@ function rewrite(net, A, B) {
     //  2          1       2 = B --- A = 1 
     var a = newNode(net, kind(net, A));
     var b = newNode(net, kind(net, B));
-    
     link(net, port(b, 0), enterPort(net, port(A, 1)));
     link(net, port(B, 0), enterPort(net, port(A, 2)));
     link(net, port(a, 0), enterPort(net, port(B, 1)));
@@ -109,12 +101,90 @@ function rewrite(net, A, B) {
     link(net, port(a, 2), port(B, 1));
     link(net, port(A, 1), port(b, 2));
     link(net, port(A, 2), port(B, 2));
-
-    setMeta(net, A, 0);
-    setMeta(net, B, 0);
+    setExit(net, A, 0);
+    setExit(net, B, 0);
     net.stats.dupls += 1;
   }
   net.stats.rules += 1;
+}
+
+function show(net, next) {
+  var prev = enterPort(net, next);
+  next = next || 0;
+  function varName(n) {
+    var suc = c => String.fromCharCode(c.charCodeAt(0) + 1);
+    var inc = s => !s ? "a" : s[0] === "z" ? "a" + inc(s.slice(1)) : suc(s) + s.slice(1);
+    return n === 0 ? "a" : inc(varName(n - 1));
+  }
+  var visited = {};
+  var actives = {};
+  function visit(x) {
+    if (!visited[x]) {
+      visited[x] = 1;
+      visit(node(enterPort(net, port(x, 0))));
+      visit(node(enterPort(net, port(x, 1))));
+      visit(node(enterPort(net, port(x, 2))));
+      if (slot(enterPort(net, port(x, 0))) === 0) {
+        actives[port(x, 0)] = 1;
+      }
+    }
+  };
+  visit(0);
+  var count = 0;
+  var names = {};
+  function name(x) {
+    if (names[x] === undefined) {
+      var y = enterPort(net, x);
+      names[x] = varName(count).toUpperCase();
+      names[y] = varName(count++).toUpperCase();
+    }
+    return names[x];
+  };
+  var str = [];
+  Object.keys(actives).map(Number).forEach(x => {
+    var localNames = {};
+    var localSeens = {};
+    var localCount = 0;
+    (function makeLocalNames(x) {
+      if (slot(x) !== 0) {
+        var y = enterPort(net, x);
+        if (localSeens[y]) {
+          localNames[x] = varName(localCount);
+          localNames[y] = varName(localCount++);
+        }
+        localSeens[x] = 1;
+      } else {
+        makeLocalNames(enterPort(net, port(node(x), 1)));
+        makeLocalNames(enterPort(net, port(node(x), 2)));
+      }
+    })(x);
+    var deco = x => prev === x ? "←" : next === x ? "→" : "";
+    var tree = (function tree(x) {
+      //if (x === 0) {
+        //return "*";
+      //} else 
+      if (slot(x) !== 0) {
+        return deco(x) + (localNames[x] || name(x));
+      } else {
+        //var m = meta(net, node(x));
+        var k = kind(net, node(x));
+        return (
+          deco(x)
+          + "("
+          //+ (k > 1 ? (k-2)+"" : k === 0 ? "- " : "")
+          //+ node(x) + ": 
+          + (k+"|")
+          //+ (m === 1 ? "." : "")
+          + tree(enterPort(net, port(node(x), 1)))
+          + " "
+          + tree(enterPort(net, port(node(x), 2)))
+          //+ (m === 2 ? "." : "")
+          + ")");
+      }
+    })(x)
+    str.push(name(x) + " = " + tree);
+  });
+  return str.join("\n");
 }
 
 module.exports = {
@@ -125,9 +195,10 @@ module.exports = {
   newNode,
   enterPort,
   kind,
-  meta,
-  setMeta,
+  exit,
+  setExit,
   link,
   reduce,
-  rewrite
+  rewrite,
+  show
 };

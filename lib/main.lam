@@ -352,4 +352,66 @@
   //List.con Bool.true
   List.nil
 
-/Bits.id ///4 2 /Bits.mul Bits.rnd32.a Bits.rnd32.b
+@I Bool.true
+@O Bool.false
+
+@col
+  #t ////////////////////////////////t
+    I I I I I I I I
+    I I I I I I I I
+    I I I I I I I I
+    I I I I I I I I
+
+
+@Img.zen #n
+  ///n
+    #r #p #B #T
+      //B
+        /r #O #I #E /O p
+        /r #O #I #E /I p
+    #B #T #p /T p
+    #O #I #E E
+
+@Img.gen #n
+  //n
+    #r #B #T //B r r
+    #B #T /T col
+
+/Img.gen 5
+/Img.zen 9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
