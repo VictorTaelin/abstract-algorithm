@@ -52,7 +52,8 @@ function reduce(net) {
   var prev, back;
   var warp = [];
   var next = net.nodes[0];
-  while (next || warp.length) {
+  var N = 0;
+  while ((next || warp.length) && ++N < 10000) {
     next = next || enterPort(net, port(warp.pop(), 2));
     prev = enterPort(net, next);
     next = enterPort(net, prev);
@@ -119,5 +120,5 @@ module.exports = {
   setExit,
   link,
   reduce,
-  rewrite
+  rewrite,
 };

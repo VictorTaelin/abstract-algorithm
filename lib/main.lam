@@ -4,6 +4,10 @@
 @Y #f
   /#x /f /x x #x /f /x x
 
+
+@Y #f
+  /#x /x x #x /f /x x
+
 @id
   #x x
 
@@ -352,4 +356,101 @@
   //List.con Bool.true
   List.nil
 
-/Bits.id ///4 2 /Bits.mul Bits.rnd32.a Bits.rnd32.b
+
+:f0 /Y #R #xs 
+  ////xs
+    #xs #R #o #i #e /o /R xs
+    #xs #R #o #i #e /i /R xs
+    #R Bits.E
+    R
+
+:f1 //8
+  #R #xs 
+    ///xs
+      #xs #o #i #e /o /R xs
+      #xs #o #i #e /i /R xs
+      #o #i #e e
+  #x x
+
+:g
+  #a ///a #b #c #d #e /c ///b #f #g #h #i /g ///f #j #k #l #m /k ///j #n #o #p #q /o ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p #q /p ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p p #j #k #l #m /l ///j #n #o #p #q /o ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p #q /p ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p p #j #k #l l #f #g #h #i /h ///f #j #k #l #m /k ///j #n #o #p #q /o ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p #q /p ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p p #j #k #l #m /l ///j #n #o #p #q /o ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p #q /p ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p p #j #k #l l #f #g #h h #b #c #d #e /d ///b #f #g #h #i /g ///f #j #k #l #m /k ///j #n #o #p #q /o ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p #q /p ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p p #j #k #l #m /l ///j #n #o #p #q /o ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p #q /p ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p p #j #k #l l #f #g #h #i /h ///f #j #k #l #m /k ///j #n #o #p #q /o ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p #q /p ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p p #j #k #l #m /l ///j #n #o #p #q /o ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p #q /p ///n #r #s #t #u /s ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t #u /t ///r #v #w #x #y /w ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x #y /x ///v #z #aa #ba #ca /aa ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba #ca /ba ///z #da #ea #fa #ga /ea da #da #ea #fa #ga /fa da #da #ea #fa fa #z #aa #ba ba #v #w #x x #r #s #t t #n #o #p p #j #k #l l #f #g #h h #b #c #d d
+
+@bs
+  #o #i #e /o
+  #o #i #e /i
+  #o #i #e /o
+  #o #i #e /i
+  #o #i #e /o
+  #o #i #e /i
+  #o #i #e /o
+  #o #i #e /i
+  #o #i #e e
+
+@not Bool.not
+@T Bool.true
+@F Bool.false
+
+@col
+  #t ////////////////////////////////t
+    T T T T T T T T
+    F F F F F F F F
+    F F F F F F F F
+    T T T T T T T T
+
+@Img.flat #n #col
+  //n
+    #r #B #T //B r r
+    #B #T /T col
+
+@Img.all #n
+  ///n
+    #r #p #B #T
+      //B
+        /r #O #I #E /O p
+        /r #O #I #E /I p
+    #p #B #T
+      /T p
+    #O #I #E E
+    
+/Img.all 13
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

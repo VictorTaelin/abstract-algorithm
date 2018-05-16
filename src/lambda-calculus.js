@@ -118,9 +118,9 @@ const toNet = term => {
           return I.port(lam, 1);
         } else {
           var dup = I.newNode(net, ++kind);
-          I.link(net, I.port(dup,1), arg);
+          I.link(net, I.port(dup,2), arg);
           I.link(net, I.port(dup,0), I.port(lam,1));
-          return I.port(dup,2);
+          return I.port(dup,1);
         }
     };
   })(term, []);
