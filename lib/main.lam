@@ -412,7 +412,7 @@
       /T p
     #O #I #E E
     
-/Img.all 13
+/Bits.id //16 Bits.suc //8 Bits.O Bits.E
   
 
 

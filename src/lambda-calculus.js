@@ -3,6 +3,8 @@ const I = require("./abstract-combinators.js");
 const Var = (idx)      => ({tag: "Var", idx});
 const Lam = (bod)      => ({tag: "Lam", bod});
 const App = (fun, arg) => ({tag: "App", fun, arg});
+const Box = (bod)      => ({tag: "Box", bod});
+const Dup = (bod)      => ({tag: "Dup", bod});
 
 const fromString = src => {
   var i = 0;
@@ -26,20 +28,21 @@ const fromString = src => {
         var nam = parseString(1);
         var bod = parseTerm([[nam,null],ctx], nofv);
         return Lam(bod);
+      case "/":
+        var fun = parseTerm(ctx, nofv);
+        var arg = parseTerm(ctx, nofv);
+        return App(fun, arg);
       case "@":
         var nam = parseString(1);
         var val = parseTerm(rem(ctx), true);
         var bod = parseTerm([[nam,val],ctx], nofv);
         return bod;
-      case ":":
-        var nam = parseString(1);
-        var val = parseTerm(ctx, nofv);
-        var bod = parseTerm([[nam,null],ctx], nofv);
-        return App(Lam(bod), val);
-      case "/":
-        var fun = parseTerm(ctx, nofv);
-        var arg = parseTerm(ctx, nofv);
-        return App(fun, arg);
+      case "!":
+        var bod = parseTerm(ctx, nofv);
+        return Box(bod);
+      case "+":
+        var bod = parseTerm(ctx, nofv);
+        return Dup(bod);
       default:
         --i;
         var nam = parseString(1);
@@ -72,6 +75,12 @@ const toString = (term, bruijn) => {
         return "/" + go(term.fun, dph) + " " + go(term.arg, dph);
       case "Lam":
         return "#" + (bruijn ? "" : varName(dph) + " ") + go(term.bod, dph + 1);
+      case "Let":
+        return ":" + (bruijn ? "" : varName(dph) + " ") + go(term.val, dph) + " " + go(term.bod, dph + 1);
+      case "Box":
+        return "!" + go(term.bod, dph);
+      case "Dup":
+        return "+" + go(term.bod, dph);
     }
   };
   return go(term, 0);
@@ -79,8 +88,8 @@ const toString = (term, bruijn) => {
 
 const toNet = term => {
   var kind = 1;
-  var net = I.newNet([0, 2, 1, 4]);
-  var ptr = (function encode(term, scope){
+  var net = I.newNet([0,2,1,4]);
+  var ptr = (function encode(term, scope, level){
     switch (term.tag){
       // Arg
       //    \
@@ -88,70 +97,78 @@ const toNet = term => {
       //    /
       // Ret
       case "App":
-        var app = I.newNode(net,1);
-        var fun = encode(term.fun, scope);
+        var app = I.newNode(net, level*2+0);
+        var fun = encode(term.fun, scope, level);
         I.link(net, I.port(app,0), fun);
-        var arg = encode(term.arg, scope);
+        var arg = encode(term.arg, scope, level);
         I.link(net, I.port(app,1), arg);
         return I.port(app,2);
       // Era =- Fun = Ret  
       //         |     
       //        Bod  
       case "Lam": 
-        var fun = I.newNode(net,1);
-        var era = I.newNode(net,0);
+        var fun = I.newNode(net, level*2+0);
+        var era = I.newNode(net, 0);
         I.link(net, I.port(fun,1), I.port(era,0));
         I.link(net, I.port(era,1), I.port(era,2));
-        var bod = encode(term.bod, [fun].concat(scope));
+        var bod = encode(term.bod, [[fun,level]].concat(scope), level);
         I.link(net, I.port(fun,2), bod);
         return I.port(fun,0);
+      case "Dup":
+        return encode(term.bod, scope, level);
+      case "Box":
+        return encode(term.bod, scope, level+1);
       // Arg
       //    \
       //     Dup =- Fun      Ret - Era
       //    /
       // Ret
       case "Var":
-        var lam = scope[term.idx];
+        var [lam,lvl] = scope[term.idx];
         var arg = I.enterPort(net, I.port(lam,1));
         if (I.kind(net, I.node(arg)) === 0) {
           net.reuse.push(I.node(arg));
           return I.port(lam, 1);
         } else {
-          var dup = I.newNode(net, ++kind);
+          var dup = I.newNode(net, lvl*2+1);
           I.link(net, I.port(dup,2), arg);
           I.link(net, I.port(dup,0), I.port(lam,1));
           return I.port(dup,1);
         }
     };
-  })(term, []);
+  })(term, [], 1);
   I.link(net, 0, ptr);
   return net;
 };
 
 const fromNet = net => {
   var nodeDepth = {};
-  return (function go(next, exit, depth){
+  return (function go(next, exit, depth, level){
     var prev = I.enterPort(net, next);
     var prevPort = I.slot(prev);
     var prevNode = I.node(prev);
-    if (I.kind(net, prevNode) === 1) {
+    var kind = I.kind(net, prevNode);
+    var box = (kind/2|0) > level ? Box : (x => x);
+    if (kind > 0 && kind % 2 === 0) {
       switch (prevPort) {
         case 0:
           nodeDepth[prevNode] = depth;
-          return Lam(go(I.port(prevNode,2), exit, depth + 1));
+          return box(Lam(go(I.port(prevNode,2), exit, depth + 1, kind/2|0)));
         case 1:
           return Var(depth - nodeDepth[prevNode] - 1);
         case 2:
-          var fun = go(I.port(prevNode,0), exit, depth);
-          var arg = go(I.port(prevNode,1), exit, depth);
-          return App(fun, arg);
+          var fun = go(I.port(prevNode,0), exit, depth, kind/2|0);
+          var arg = go(I.port(prevNode,1), exit, depth, kind/2|0);
+          return box(App(fun, arg));
       }
     } else {
       var wire = I.port(prevNode, prevPort > 0 ? 0 : exit.head);
       var port = prevPort > 0 ? {head: prevPort, tail: exit} : exit.tail;
-      return go(wire, port, depth);
+      var ret = go(wire, port, depth, level);
+      if (ret.tag === "Dup") ret = ret.bod; 
+      return Dup(ret);
     }
-  })(0, null, 0);
+  })(0, null, 0, 1);
 };
 
 const reduce = (src, returnStats, bruijn) => {
