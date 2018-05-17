@@ -63,6 +63,7 @@ function reduce(net) {
     } else if (slot(next) === 0) {
       warp.push(node(next));
       next = enterPort(net, port(node(next), 1));
+      setExit(net, node(next), 3); 
     } else {
       setExit(net, node(next), slot(next));
       next = enterPort(net, port(node(next), 0));
@@ -107,6 +108,85 @@ function rewrite(net, A, B) {
   net.stats.rules += 1;
 }
 
+function show(net, next) {
+  var prev = enterPort(net, next);
+  next = next || 0;
+  function varName(n) {
+    var suc = c => String.fromCharCode(c.charCodeAt(0) + 1);
+    var inc = s => !s ? "a" : s[0] === "z" ? "a" + inc(s.slice(1)) : suc(s) + s.slice(1);
+    return n === 0 ? "a" : inc(varName(n - 1));
+  }
+  var visited = {};
+  var actives = {};
+  function visit(x) {
+    if (!visited[x]) {
+      visited[x] = 1;
+      visit(node(enterPort(net, port(x, 0))));
+      visit(node(enterPort(net, port(x, 1))));
+      visit(node(enterPort(net, port(x, 2))));
+      if (slot(enterPort(net, port(x, 0))) === 0) {
+        actives[port(x, 0)] = 1;
+      }
+    }
+  };
+  visit(0);
+  var count = 0;
+  var names = {};
+  function name(x) {
+    if (names[x] === undefined) {
+      var y = enterPort(net, x);
+      names[x] = varName(count).toUpperCase();
+      names[y] = varName(count++).toUpperCase();
+    }
+    return names[x];
+  };
+  var str = [];
+  Object.keys(actives).map(Number).forEach(x => {
+    var localNames = {};
+    var localSeens = {};
+    var localCount = 0;
+    (function makeLocalNames(x) {
+      if (slot(x) !== 0) {
+        var y = enterPort(net, x);
+        if (localSeens[y]) {
+          localNames[x] = varName(localCount);
+          localNames[y] = varName(localCount++);
+        }
+        localSeens[x] = 1;
+      } else {
+        makeLocalNames(enterPort(net, port(node(x), 1)));
+        makeLocalNames(enterPort(net, port(node(x), 2)));
+      }
+    })(x);
+    var deco = x => prev === x ? "←" : next === x ? "→" : "";
+    var tree = (function tree(x) {
+      //if (x === 0) {
+        //return "*";
+      //} else 
+      if (slot(x) !== 0) {
+        return deco(x) + (localNames[x] || name(x));
+      } else {
+        //var m = meta(net, node(x));
+        var k = kind(net, node(x));
+        return (
+          deco(x)
+          + "("
+          //+ (k > 1 ? (k-2)+"" : k === 0 ? "- " : "")
+          //+ node(x) + ": 
+          + (k+"|")
+          //+ (m === 1 ? "." : "")
+          + tree(enterPort(net, port(node(x), 1)))
+          + " "
+          + tree(enterPort(net, port(node(x), 2)))
+          //+ (m === 2 ? "." : "")
+          + ")");
+      }
+    })(x)
+    str.push(name(x) + " = " + tree);
+  });
+  return str.join("\n");
+}
+
 module.exports = {
   port,
   node,
@@ -119,5 +199,6 @@ module.exports = {
   setExit,
   link,
   reduce,
-  rewrite
+  rewrite,
+  show
 };
