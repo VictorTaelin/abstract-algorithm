@@ -79,7 +79,12 @@ const toString = (term, bruijn) => {
 
 const toNet = term => {
   var kind = 1;
-  var net = I.newNet([0, 2, 1, 4]);
+  var indx = 0;
+  var net = I.newNet();
+  net.nodes[0] = 0;
+  net.nodes[1] = 2;
+  net.nodes[2] = 1;
+  net.nodes[3] = 4;
   var ptr = (function encode(term, scope){
     switch (term.tag){
       // Arg
@@ -88,7 +93,7 @@ const toNet = term => {
       //    /
       // Ret
       case "App":
-        var app = I.newNode(net,1);
+        var app = I.newNode(net,1,[++indx]);
         var fun = encode(term.fun, scope);
         I.link(net, I.port(app,0), fun);
         var arg = encode(term.arg, scope);
@@ -98,8 +103,8 @@ const toNet = term => {
       //         |     
       //        Bod  
       case "Lam": 
-        var fun = I.newNode(net,1);
-        var era = I.newNode(net,0);
+        var fun = I.newNode(net,1,[++indx]);
+        var era = I.newNode(net,0,[++indx]);
         I.link(net, I.port(fun,1), I.port(era,0));
         I.link(net, I.port(era,1), I.port(era,2));
         var bod = encode(term.bod, [[fun,++kind]].concat(scope));
@@ -114,10 +119,9 @@ const toNet = term => {
         var [lam,kin] = scope[term.idx];
         var arg = I.enterPort(net, I.port(lam,1));
         if (I.kind(net, I.node(arg)) === 0) {
-          net.reuse.push(I.node(arg));
           return I.port(lam, 1);
         } else {
-          var dup = I.newNode(net, kin);
+          var dup = I.newNode(net,kin,[++indx]);
           I.link(net, I.port(dup,2), arg);
           I.link(net, I.port(dup,0), I.port(lam,1));
           return I.port(dup,1);

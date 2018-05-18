@@ -25,5 +25,7 @@
     "url": "https://github.com/maiavictor/abstract-algorithm/issues"
   },
   "homepage": "https://github.com/maiavictor/abstract-algorithm#readme",
-  "dependencies": {}
+  "dev-dependencies": {
+    "js-sha3": "^0.7.0"
+  }
 }
