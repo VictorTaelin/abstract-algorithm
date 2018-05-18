@@ -79,7 +79,8 @@ const toString = (term, bruijn) => {
 
 const toNet = term => {
   var kind = 1;
-  var net = I.newNet([0, 2, 1, 4]);
+  var indx = 0;
+  var net = I.newNet([0,2,1,4]);
   var ptr = (function encode(term, scope){
     switch (term.tag){
       // Arg
@@ -114,10 +115,9 @@ const toNet = term => {
         var [lam,kin] = scope[term.idx];
         var arg = I.enterPort(net, I.port(lam,1));
         if (I.kind(net, I.node(arg)) === 0) {
-          net.reuse.push(I.node(arg));
           return I.port(lam, 1);
         } else {
-          var dup = I.newNode(net, kin);
+          var dup = I.newNode(net,kin);
           I.link(net, I.port(dup,2), arg);
           I.link(net, I.port(dup,0), I.port(lam,1));
           return I.port(dup,1);

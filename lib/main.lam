@@ -345,6 +345,8 @@
   /Bits.O /Bits.I /Bits.O /Bits.I /Bits.I /Bits.O /Bits.I /Bits.I
   Bits.E
 
+//Bits.mul Bits.rnd32.a Bits.rnd32.b
+
 @xs
   //List.con Bool.false
   //List.con Bool.false
