@@ -18,12 +18,13 @@ try {
   console.log("\nUsage:");
   console.log("  absal [--stats] [--bruijn] [--nobase] fileName[.lam]");
   console.log("\nSyntax:");
-  console.log("  #arg body      : lambda expression");
-  console.log("  /fn arg        : applies fn to arg");
-  console.log("  @name val expr : let name be val in expr");
+  console.log("  #arg body      => lambda expression");
+  console.log("  :fn arg        => applies fn to arg");
+  console.log("  @name val expr => let name be val in expr");
+  console.log("  =name val expr => same as :#name expr val");
   console.log("\nExample:");
-  console.log("  @four #f #x /f /f /f /f x");
-  console.log("  /four four");
+  console.log("  @four #f #x :f :f :f :f x");
+  console.log("  :four four");
   console.log("\nStats:");
   console.log("  - loops    : how many times the main loop was executed");
   console.log("  - rules    : total graph rewrites (dupls + annis)");

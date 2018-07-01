@@ -31,12 +31,12 @@ const fromString = src => {
         var val = parseTerm(rem(ctx), true);
         var bod = parseTerm([[nam,val],ctx], nofv);
         return bod;
-      case ":":
+      case "=":
         var nam = parseString(1);
         var val = parseTerm(ctx, nofv);
         var bod = parseTerm([[nam,null],ctx], nofv);
         return App(Lam(bod), val);
-      case "/":
+      case ":":
         var fun = parseTerm(ctx, nofv);
         var arg = parseTerm(ctx, nofv);
         return App(fun, arg);
@@ -69,7 +69,7 @@ const toString = (term, bruijn) => {
       case "Var":
         return varName(bruijn ? term.idx : dph - term.idx - 1);
       case "App":
-        return "/" + go(term.fun, dph) + " " + go(term.arg, dph);
+        return ":" + go(term.fun, dph) + " " + go(term.arg, dph);
       case "Lam":
         return "#" + (bruijn ? "" : varName(dph) + " ") + go(term.bod, dph + 1);
     }
