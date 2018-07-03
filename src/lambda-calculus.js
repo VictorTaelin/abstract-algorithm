@@ -79,7 +79,7 @@ const toString = (term, bruijn) => {
 
 const toNet = term => {
   var kind = 1;
-  var net = I.newNet([0, 2, 1, 4]);
+  var net = I.newNet([0, 2, 1, 4], [0]);
   var ptr = (function encode(term, scope){
     switch (term.tag){
       // Arg

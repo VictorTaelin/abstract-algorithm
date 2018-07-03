@@ -10,20 +10,22 @@ function slot(port) {
   return port & 3;
 }
 
-function newNet(nodes) {
+function newNet(nodes, uses) {
   return {
     nodes: nodes || [],
     reuse: [],
-    stats: {loops:0, rules:0, betas:0, dupls:0, annis:0}
+    stats: {loops:0, rules:0, betas:0, dupls:0, annis:0, max_uses:0},
+    uses: uses || []
   };
 }
 
-function newNode(net, kind) {
+function newNode(net, kind, uses) {
   var node = net.reuse.pop() || (net.nodes.length / 4);
   net.nodes[node * 4 + 0] = node * 4 + 0;
   net.nodes[node * 4 + 1] = node * 4 + 1;
   net.nodes[node * 4 + 2] = node * 4 + 2;
   net.nodes[node * 4 + 3] = kind << 2;
+  net.uses[node] = uses || 0;
   return node;
 }
 
@@ -51,6 +53,10 @@ function link(net, a, b) {
 function reduce(net) {
   var prev, back;
   var warp = [];
+  var hist = [];
+  for (var i = 0; i < net.length / 4; ++i) {
+    hist[i] = "";
+  }
   var next = net.nodes[0];
   while (next || warp.length) {
     next = next || enterPort(net, port(warp.pop(), 2));
@@ -85,14 +91,19 @@ function rewrite(net, A, B) {
     net.stats.betas += kind(net, A) === 1 ? 1 : 0;
     net.stats.annis += 1;
     net.reuse.push(A, B);
+    net.uses[A] = 0;
+    net.uses[B] = 0;
   } else {
     //  1          2       1 = B --- A = 2
     //   \        /              \ /   
     //     A == B     -->         X    
     //   /        \              / \  
     //  2          1       2 = B --- A = 1 
-    var a = newNode(net, kind(net, A));
-    var b = newNode(net, kind(net, B));
+    net.uses[A] += 1;
+    net.uses[B] += 1;
+    var a = newNode(net, kind(net, A), net.uses[A]);
+    var b = newNode(net, kind(net, B), net.uses[B]);
+    net.stats.max_uses = Math.max(net.stats.max_uses, Math.max(net.uses[A], net.uses[B]));
     link(net, port(b, 0), enterPort(net, port(A, 1)));
     link(net, port(B, 0), enterPort(net, port(A, 2)));
     link(net, port(a, 0), enterPort(net, port(B, 1)));
