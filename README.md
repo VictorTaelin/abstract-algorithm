@@ -1,6 +1,6 @@
 # Lamping's Abstract Algorithm
 
-A cleaned up adaptation of [Lamping's abstract algorithm](http://dl.acm.org/citation.cfm?id=96711). It evaluates functions optimally by encoding a λ-term as ([symmetric](https://scholar.google.com.br/scholar?q=symmetric+interaction+combinators&hl=en&as_sdt=0&as_vis=1&oi=scholart&sa=X&ved=0ahUKEwjNgZbO7aTVAhUEkZAKHYyTAFgQgQMIJjAA)) [interaction combinators](http://www.sciencedirect.com/science/article/pii/S0890540197926432), normalizing the resulting graph, and decoding it back. It asymptotically beats all usual evaluators of functional programs, including Haskell's GHC, Scheme compilers, Google's V8 and so on. Moreover, it is capable of automatically exploiting any inherent parallelizability of your program, since interaction nets are a naturally concurrent model of computation. This implementation consists of two files, [a 100-LOC reducer](src/abstract-combinators.js) for interaction combinators and [a 71-loc conversor](https://github.com/MaiaVictor/abstract-algorithm/blob/master/src/lambda-encoder.js) of λ-terms to and from those. It isn't parallel, but is completely lazy: it doesn't perform any work that won't influence on the normal form. There is an inherent tradeoff between those.
+A cleaned up adaptation of [Lamping's abstract algorithm](http://dl.acm.org/citation.cfm?id=96711). It evaluates functions optimally by encoding a λ-term as ([symmetric](https://scholar.google.com.br/scholar?q=symmetric+interaction+combinators&hl=en&as_sdt=0&as_vis=1&oi=scholart&sa=X&ved=0ahUKEwjNgZbO7aTVAhUEkZAKHYyTAFgQgQMIJjAA)) [interaction combinators](http://www.sciencedirect.com/science/article/pii/S0890540197926432), normalizing the resulting graph, and decoding it back. It asymptotically beats all usual evaluators of functional programs, including Haskell's GHC, Scheme compilers, Google's V8 and so on. Moreover, it is capable of automatically exploiting any inherent parallelizability of your program, since interaction nets are a naturally concurrent model of computation. This implementation consists of two files, [a 100-LOC reducer](src/abstract-combinators.js) for interaction combinators and [a 71-loc conversor](https://github.com/MaiaVictor/abstract-algorithm/blob/master/src/lambda-encoder.js) of λ-terms to and from those. This particular implementation isn't parallel, but is lazy: it doesn't perform any work that won't influence on the normal form. There is an inherent tradeoff between those.
 
 ![combinator_rules](images/combinators_rules.png)
 
@@ -34,6 +34,8 @@ A cleaned up adaptation of [Lamping's abstract algorithm](http://dl.acm.org/cita
     ```
 
 ## Bla bla bla
+
+[Rust implementation.](https://github.com/MaiaVictor/absal-rs/)
 
 Crappy handwritten examples:
 
