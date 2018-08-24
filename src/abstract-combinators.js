@@ -3,23 +3,25 @@ function port(node, slot) {
 }
 
 function node(port) {
-  return port >>> 2;
+  return port >> 2;
 }
 
 function slot(port) {
   return port & 3;
 }
 
-function newNet(nodes) {
+function newNet() {
   return {
-    nodes: nodes || [],
+    debug: null,
+    nodes: [],
     reuse: [],
     stats: {loops:0, rules:0, betas:0, dupls:0, annis:0}
   };
 }
 
 function newNode(net, kind) {
-  var node = net.reuse.pop() || (net.nodes.length / 4);
+  var node = net.reuse.pop() || (net.nodes.length / 4);  
+  if(net.debug) net.debug.chnge.add(node)
   net.nodes[node * 4 + 0] = node * 4 + 0;
   net.nodes[node * 4 + 1] = node * 4 + 1;
   net.nodes[node * 4 + 2] = node * 4 + 2;
@@ -32,33 +34,34 @@ function enterPort(net, w) {
 }
 
 function kind(net, node) {
-  return net.nodes[node * 4 + 3] >>> 2;
+  return net.nodes[node * 4 + 3] >>> 2;
 }
 
 function exit(net, node) {
-  return (net.nodes[node * 4 + 3] >>> 0) & 3;
+  return (net.nodes[node * 4 + 3] >>> 0) & 3;
 }
 
 function setExit(net, node, exit) {
-  return net.nodes[node * 4 + 3] = net.nodes[node * 4 + 3] & 0xFFFFFFFC | exit;
+  return net.nodes[node * 4 + 3] = net.nodes[node * 4 + 3] & 0xFFFFFFFC | exit;
 }
 
 function link(net, a, b) {
-  net.nodes[a] = b;
-  net.nodes[b] = a;
+  net.nodes[a] = b; if (net.debug) net.debug.chnge.add(node(a))
+  net.nodes[b] = a; if (net.debug) net.debug.chnge.add(node(b))
 }
 
 function reduce(net) {
   var prev, back;
   var warp = [];
   var next = net.nodes[0];
+  if (net.debug) net.debug.flush();
   while (next || warp.length) {
     next = next || enterPort(net, port(warp.pop(), 2));
     prev = enterPort(net, next);
     next = enterPort(net, prev);
     if (slot(next) === 0 && slot(prev) === 0 && node(prev)) {
       back = enterPort(net, port(node(prev), exit(net, node(prev))));
-      rewrite(net, node(prev), node(next), net.stats);
+      rewrite(net, node(prev), node(next));
       next = enterPort(net, back);
     } else if (slot(next) === 0) {
       warp.push(node(next));
@@ -69,19 +72,20 @@ function reduce(net) {
       next = enterPort(net, port(node(next), 0));
     }
     ++net.stats.loops;
+    if(net.debug) net.debug.flush()
   }
   return net;
 }
 
 function rewrite(net, A, B) {
-  if (kind(net,A) === kind(net,B)) {
+  if (kind(net, A) === kind(net, B)) {
     //  1          2            1   2
     //   \        /              \ / 
     //     A == B       -->       X  
     //   /        \              / \ 
     //  2          1            2   1
-    link(net, enterPort(net, port(A, 1)),  enterPort(net, port(B, 1)));
-    link(net, enterPort(net, port(A, 2)),  enterPort(net, port(B, 2)));
+    link(net, enterPort(net, port(A, 1)), enterPort(net, port(B, 1)));
+    link(net, enterPort(net, port(A, 2)), enterPort(net, port(B, 2)));
     net.stats.betas += kind(net, A) === 1 ? 1 : 0;
     net.stats.annis += 1;
     net.reuse.push(A, B);
@@ -106,6 +110,12 @@ function rewrite(net, A, B) {
     net.stats.dupls += 1;
   }
   net.stats.rules += 1;
+}
+
+function toJson(net, index) {
+  var node = {
+
+  }
 }
 
 module.exports = {

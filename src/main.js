@@ -3,13 +3,14 @@
 var fs = require("fs");
 var path = require("path");
 var L = require("./lambda-calculus.js");
+var A = require("./abstract-combinators.js");
 
 try {
   var args = [].slice.call(process.argv, 2);
   var stats = args.indexOf("-s") !== -1 || args.indexOf("--stats") !== -1;
   var bruijn = args.indexOf("-b") !== -1 || args.indexOf("--bruijn") !== -1;
   var nobase = args.indexOf("-n") !== -1 || args.indexOf("--nobase") !== -1;
-  var dump = args.indexOf("-d") !== -1 || args.indexOf("--dump") !== -1;
+  var debug = args.indexOf("-d") !== -1 || args.indexOf("--debug") !== -1;
   var file = args[args.length - 1];
   var base = fs.readFileSync(path.join(__dirname, "..", "lib", "base.lam"), "utf8");
   var code = fs.readFileSync("./" + (file.indexOf(".") === -1 ? file + ".lam" : file), "utf8");
@@ -34,24 +35,26 @@ try {
   process.exit();
 }
 
-function print(net) {
-  for (var i=0; i < net.nodes.length; i+=4) {
-    if (net.reuse.some(x => x === i >> 2)) {
-      console.log(i>>2);
-      continue;
+var net = A.newNet();
+if (debug) {
+  fs.writeFileSync('debug.txt', '');
+  var file = fs.createWriteStream('debug.txt', {'flags':'a'});
+  net.debug = {
+    chnge: new Set([]),
+    flush: () => {
+      net.debug.chnge.forEach( i => file.write(`${i} ${net.nodes[i+0]} ${net.nodes[i+1]} ${net.nodes[i+2]} ${net.nodes[i+3]}\n`));
+      net.debug.chnge.clear()
+      file.write('\n');
     }
-    [a,b,c,d] = net.nodes.slice(i, i+4);
-    console.log(i>>2, `${a>>2}:${a&3} ${b>>2}:${b&3} ${c>>2}:${c&3} ${d>>2}:${d&3}`);
   }
 }
 
 var start = Date.now();
-var net = L.toNet(L.fromString(nobase ? code : base + " " + code));
-if (dump) { print(net); }
+var net = L.toNet(net, L.fromString(nobase ? code : base + " " + code));
 var net = L.net.reduce(net);
-if (dump) { print(net); }
-var result = {term: L.toString(L.fromNet(net), bruijn), stats: net.stats};
-var time = Date.now() - start;
+var result = { term: L.toString(L.fromNet(net), bruijn), stats: net.stats };
+
+if (debug) file.end('')
 
 console.log(result.term);
 if (stats) {

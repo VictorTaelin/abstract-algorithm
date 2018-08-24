@@ -25,5 +25,7 @@
     "url": "https://github.com/maiavictor/abstract-algorithm/issues"
   },
   "homepage": "https://github.com/maiavictor/abstract-algorithm#readme",
-  "dependencies": {}
+  "dependencies": {
+    "numjs": "^0.16.0"
+  }
 }

@@ -77,9 +77,9 @@ const toString = (term, bruijn) => {
   return go(term, 0);
 };
 
-const toNet = term => {
+const toNet = (net, term) => {
   var kind = 1;
-  var net = I.newNet([0, 2, 1, 4]);
+  I.newNode(net, kind); I.link(net, 1, 2);
   var ptr = (function encode(term, scope){
     switch (term.tag){
       // Arg
