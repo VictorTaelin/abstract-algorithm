@@ -40,11 +40,14 @@ if (debug) {
   fs.writeFileSync('debug.txt', '');
   var file = fs.createWriteStream('debug.txt', {'flags':'a'});
   net.debug = {
-    chnge: new Set([]),
+    rmove: new Set([]),
+    nodes: new Set([]),
     flush: () => {
-      net.debug.chnge.forEach( i => file.write(`${i} ${net.nodes[i+0]} ${net.nodes[i+1]} ${net.nodes[i+2]} ${net.nodes[i+3]}\n`));
-      net.debug.chnge.clear()
-      file.write('\n');
+      file.write(`\n${net.gonxt}\n`);
+      net.debug.rmove.forEach( i => file.write(`${i} `)); file.write('\n');
+      net.debug.nodes.forEach( i => file.write(`${i} ${net.nodes[i*4+0]} ${net.nodes[i*4+1]} ${net.nodes[i*4+2]} ${net.nodes[i*4+3]}\n`));
+      net.debug.nodes.clear()
+      net.debug.rmove.clear();
     }
   }
 }

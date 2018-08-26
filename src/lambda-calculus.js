@@ -114,7 +114,7 @@ const toNet = (net, term) => {
         var [lam,kin] = scope[term.idx];
         var arg = I.enterPort(net, I.port(lam,1));
         if (I.kind(net, I.node(arg)) === 0) {
-          net.reuse.push(I.node(arg));
+          I.reuse(net, I.node(arg));
           return I.port(lam, 1);
         } else {
           var dup = I.newNode(net, kin);
