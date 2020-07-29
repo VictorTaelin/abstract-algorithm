@@ -1,17 +1,14 @@
 {
   "name": "abstract-algorithm",
-  "version": "0.1.25",
-  "description": "Abstract-algorithm for optional reduction of stratifiable lambda terms",
-  "main": "src/lambda-calculus.js",
+  "version": "0.2.0",
+  "description": "Optimal evaluation of some lambda terms",
+  "main": "absal.js",
   "bin": {
-    "absal": "src/main.js"
-  },
-  "scripts": {
-    "test": "node test.js"
+    "absal": "main.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maiavictor/interaction-combinators.git"
+    "url": "git+https://github.com/maiavictor/abstract-algorithm.git"
   },
   "keywords": [
     "functional-programming",

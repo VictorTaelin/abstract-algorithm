@@ -1,6 +1,24 @@
-# Lamping's Abstract Algorithm
+# Absal
 
-A cleaned up adaptation of [Lamping's abstract algorithm](http://dl.acm.org/citation.cfm?id=96711). It evaluates functions optimally by encoding a λ-term as ([symmetric](https://scholar.google.com.br/scholar?q=symmetric+interaction+combinators&hl=en&as_sdt=0&as_vis=1&oi=scholart&sa=X&ved=0ahUKEwjNgZbO7aTVAhUEkZAKHYyTAFgQgQMIJjAA)) [interaction combinators](http://www.sciencedirect.com/science/article/pii/S0890540197926432), normalizing the resulting graph, and decoding it back. It asymptotically beats all usual evaluators of functional programs, including Haskell's GHC, Scheme compilers, Google's V8 and so on. Moreover, it is capable of automatically exploiting any inherent parallelizability of your program, since interaction nets are a naturally concurrent model of computation. This implementation consists of two files, [a 100-LOC reducer](src/abstract-combinators.js) for interaction combinators and [a 71-loc conversor](https://github.com/MaiaVictor/abstract-algorithm/blob/master/src/lambda-encoder.js) of λ-terms to and from those. This particular implementation isn't parallel, but is lazy: it doesn't perform any work that won't influence on the normal form. There is an inherent tradeoff between those.
+An optimal evaluator for the λ-calculus. Absal works by compiling terms to
+([symmetric](https://scholar.google.com.br/scholar?q=symmetric+interaction+combinators&hl=en&as_sdt=0&as_vis=1&oi=scholart&sa=X&ved=0ahUKEwjNgZbO7aTVAhUEkZAKHYyTAFgQgQMIJjAA))
+[interaction
+combinators](http://www.sciencedirect.com/science/article/pii/S0890540197926432).
+
+It **asymptotically** beats all usual evaluators of functional programs,
+including Scheme Chez, Haskell GHC, JavaScript V8 and so on, which means it can
+be millions of times faster in some cases, as explained on [this
+article](https://medium.com/@maiavictor/solving-the-mystery-behind-abstract-algorithms-magical-optimizations-144225164b07).
+
+
+It is similar to other optimal evaluators, except that it doesn't include any
+book-keeping machinery ("oracle"), only the "elegant core". Because of that, the
+implementation is very small, around 250 lines of code, including parsers.
+
+Sadly, this algorithm isn't capable of evaluating the entire λ-calculus since it
+isn't capable of reducing terms that copy a copy of themselves (like `(λx.(x x)
+λf.λx.(f (f x)))`). While this is very rare in practice, making Absal compatible
+with the entire λ-calculus is an important open problem.
 
 ![combinator_rules](images/combinators_rules.png)
 
@@ -12,32 +30,60 @@ A cleaned up adaptation of [Lamping's abstract algorithm](http://dl.acm.org/cita
     npm install -g abstract-algorithm
     ```
 
-- Use as a lib
-
-    ```javascript
-    const absal = require(".");
-
-    // church-encoded exponentiation of 2^2
-    const term = `
-      @two #s #z /s /s z
-      /two two
-    `;
-
-    // evaluates optimally
-    console.log(absal.reduce(term,1)); // 1 = return stats
-    ```
-
 - Use as a command
 
     ```bash
-    absal fileName.lam
+    absal "(λf.λx.(f (f x)) λf.λx.(f (f x)))"
+
+    # or...
+
+    absal <file_name>
     ```
 
-## Bla bla bla
+- Use as a lib
 
-[Rust implementation.](https://github.com/MaiaVictor/absal-rs/)
+    ```javascript
+    const Absal = require("absal");
 
-Crappy handwritten examples:
+    // Parses a λ-term
+    var term = Absal.core.read("(λf.λx.(f (f x)) λf.λx.(f (f x)))");
+
+    // Compiles to interaction combinators net
+    var inet = Absal.inet.read(Absal.comp.compile(term));
+
+    // Reduces the net
+    var rewrites = Absal.inet.reduce(inet);
+
+    // Decompiles back to a λ-term
+    var term = Absal.comp.decompile(inet);
+
+    // Prints the result
+    console.log(Absal.core.show(term));
+    console.log("("+rewrites+" rewrites)");
+    ```
+
+- Work with interaction combinators directly
+
+    ```javascript
+    const Absal = require("absal");
+
+    // Creates an interaction combinator net with 4 nodes
+    var inet = Absal.inet.read(`
+    - a b a
+    - c d b
+    - c e e
+    - d f f
+    `);
+
+    // Reduces the net
+    var rewrites = Absal.inet.reduce(inet);
+
+    // Prints the result
+    console.log(Absal.inet.show(inet));
+    console.log("("+rewrites+" rewrites)");
+    ```
+
+## Some drawings
 
 - [Numbers](images/handwritten_example.jpg?raw=true)
 
@@ -45,6 +91,10 @@ Crappy handwritten examples:
 
 - [Either](images/either_on_inets.jpg?raw=true)
 
-[Here](https://github.com/MaiaVictor/abstract-algorithm/blob/old_repo/examples/lambda-calculus.js) is a working example on how to use this lib to reduce untyped λ-terms (outdated syntax). [Here](https://github.com/MaiaVictor/parallel_lambda_computer_tests) is an attempt to flatten the graph-reduction algorithm to a linear automata, in such a way that it could, in theory, be implemented as a massivelly parallel ASIC where each 128-bit memory cell is actually a nano-CPU capable of updating its state by looking at its neighbors, in such a way that it causes the emergent global behavior of the memory to converge to the normal form of the initial graph.
+# Stuff
 
-~~Note this only works with [stratified terms](https://www.reddit.com/r/haskell/comments/6phxvb/cleaned_up_implementation_of_lampings_abstract/dkq57yx/?context=1), which roughly means that the algorithm breaks when you have duplications inside of duplications. To make it work with arbitrary terms, you'd need to augment the system with a complex machinery known as oracle. There are many ways to do it, but all of them ruin the performance. I personally prefer to call non-stratified terms defective and ignore them. It is not hard to avoid those terms, you just have to be cautious about the implicit duplication of arguments performed by beta-reduction (which is the root of all evil).~~ (Edit: [this is outdated](https://www.reddit.com/r/haskell/comments/8bwlxp/supercompilation_for_free_with_the_abstract/dxaiuyi/); the abstract algorithm seems to work fine with, for example, general recursion, so stratification is too restrict. It is unclear what is a precise structural criteria that determines terms that work, but, in my experience, any Haskell declaration works with some minor tweaks. Note that the subset of oracle-free terms [is Turing complete](https://github.com/MaiaVictor/articles/tree/master/0000-oracle-free-terms-are-turing-complete).)
+- [This](https://github.com/MaiaVictor/abstract-algorithm/blob/old_repo/examples/lambda-calculus.js)
+
+- [This](https://github.com/MaiaVictor/parallel_lambda_computer_tests)
+
+- [Formality](https://github.com/moonad/formality)
