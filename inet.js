@@ -73,6 +73,7 @@ function equal(a, b) {
 // Gets the other side of a pointer
 function enter(inet, ptr) {
   if (inet[ptr.node] !== null) {
+    //console.log(inet, ptr.node);
     return inet[ptr.node].port[ptr.slot];
   } else {
     return null;
@@ -92,7 +93,7 @@ function link(inet, a_ptr, b_ptr) {
 // Unlinks a port (neighbor will point to itself)
 function unlink(inet, a_ptr) {
   var b_ptr = enter(inet, a_ptr);
-  if (equal(a_ptr, b_ptr)) {
+  if (equal(a_ptr, enter(inet, b_ptr))) {
     inet[a_ptr.node].port[a_ptr.slot] = a_ptr;
     inet[b_ptr.node].port[b_ptr.slot] = b_ptr;
   }

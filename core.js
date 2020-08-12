@@ -23,6 +23,7 @@ function show(term) {
 // church nat 2 and the identity function.
 function read(code) {
   var indx = 0;
+  var code = code.split("\n").map(x => x.replace(/\/\/.*/gm,"")).join("\n");
   function skip_space() {
     while (indx < code.length && /[ \n]/.test(code[indx])) {
       ++indx;
@@ -42,23 +43,36 @@ function read(code) {
     }
     indx++;
   }
+  var defs = {};
   function read_term() {
     skip_space();
     var head = code[indx++];
     switch (head) {
-      case "(":
-        var func = read_term();
-        var argm = read_term();
+      case "(": // app
+        var term = read_term();
+        while (indx < code.length && !/^\s*\)/.test(code.slice(indx))) {
+          term = App(term, read_term());
+        }
         var skip = read_char(")");
-        return App(func, argm);
-      case "λ":
+        return term;
+      case "λ": // lam
         var name = read_name();
         var skip = read_char(".");
         var body = read_term();
         return Lam(name, body);
+      case "@": // let
+        var name = read_name();
+        var term = read_term();
+        var body = read_term();
+        return App(Lam(name, body), term);
+      case "$": // def
+        var name = read_name();
+        var term = read_term();
+        defs[name] = term;
+        return read_term();
       default:
-        var tail = read_name();
-        return Var(head + tail);
+        var name = head + read_name();
+        return defs[name] || Var(name);
     }
   }
   return read_term();

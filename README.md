@@ -10,15 +10,14 @@ including Scheme Chez, Haskell GHC, JavaScript V8 and so on, which means it can
 be millions of times faster in some cases, as explained on [this
 article](https://medium.com/@maiavictor/solving-the-mystery-behind-abstract-algorithms-magical-optimizations-144225164b07).
 
-
 It is similar to other optimal evaluators, except that it doesn't include any
 book-keeping machinery ("oracle"), only the "elegant core". Because of that, the
 implementation is very small, around 250 lines of code, including parsers.
 
-Sadly, this algorithm isn't capable of evaluating the entire λ-calculus since it
-isn't capable of reducing terms that copy a copy of themselves (like `(λx.(x x)
-λf.λx.(f (f x)))`). While this is very rare in practice, making Absal compatible
-with the entire λ-calculus is an important open problem.
+Sadly, this algorithm isn't complete: it is incapable of evaluating λ-terms that
+copy a copy of themselves (like `(λx.(x x) λf.λx.(f (f x)))`). While this is
+very rare in practice, making Absal compatible with the entire λ-calculus is an
+important open problem.
 
 ![combinator_rules](images/combinators_rules.png)
 
