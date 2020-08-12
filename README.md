@@ -21,6 +21,8 @@ important open problem.
 
 ![combinator_rules](images/combinators_rules.png)
 
+![inets](https://raw.githubusercontent.com/moonad/Assets/master/images/inet-simulation.gif)
+
 ## Usage
 
 - Install
