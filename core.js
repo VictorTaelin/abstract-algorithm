@@ -31,7 +31,7 @@ function read(code) {
   }
   function read_name() {
     var name = "";
-    while (indx < code.length && /[a-zA-Z0-9]/.test(code[indx])) {
+    while (indx < code.length && /[a-zA-Z0-9_!]/.test(code[indx])) {
       name += code[indx++];
     }
     return name;
@@ -77,7 +77,8 @@ function read(code) {
         } else if (defs[name]) {
           return defs[name];
         } else {
-          throw "Unbound variable: '"+name+"'.";
+          return Var(name);
+          //throw "Unbound variable: '"+name+"'.";
         }
     }
   }

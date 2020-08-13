@@ -3,14 +3,62 @@ const Inet = require("./inet.js");
 const Name = require("./name.js");
 
 // Compiles a λ-term to an interaction net.
+// This function became a little verbose after I patched it to allow global
+// lambdas, which are identified by uppercase variable names (ex: λA.body). The
+// difference is that their variables can occur outside of their bodies and,
+// thus, the names are global and aren't overshadowed by usual scoping rules.
+// This function can be simplified by rewriting with this in mind.
 function compile(term) {
   var vars = {};
+  var LAMS = {};
+  function is_global(name) {
+    return name[0] === "!";
+  };
+  function find_global_lams(term) {
+    switch (term.ctor) {
+      case "Lam":
+        if (is_global(term.name)) {
+          term.self = Name.fresh();
+          vars[term.self] = [];
+          LAMS[term.name] = term.self;
+        }
+        find_global_lams(term.body);
+        break;
+      case "App":
+        find_global_lams(term.func);
+        find_global_lams(term.argm);
+        break;
+      case "Var":
+        break;
+    }
+  };
+  function find_global_vars(term) {
+    switch (term.ctor) {
+      case "Lam":
+        find_global_vars(term.body);
+        break;
+      case "App":
+        find_global_vars(term.func);
+        find_global_vars(term.argm);
+        break;
+      case "Var":
+        if (is_global(term.name)) {
+          term.self = Name.fresh();
+          var lamb = LAMS[term.name];
+          vars[lamb].push(term.self);
+        }
+    }
+  }
   function go(term, lams) {
     switch (term.ctor) {
       case "Lam":
-        var self = Name.fresh();
-        vars[self] = [];
-        var lams = {...lams, [term.name]: self};
+        if (is_global(term.name)) {
+          var self = term.self;
+        } else {
+          var self = Name.fresh();
+          vars[self] = [];
+          var lams = {...lams, [term.name]: self};
+        }
         var body = go(term.body, lams);
         if (vars[self].length === 0) {
           var varn = "-";
@@ -32,16 +80,23 @@ function compile(term) {
         lines.push("- "+func+" "+argm+" "+self);
         return self;
       case "Var":
-        var self = Name.fresh();
-        var lamb = lams[term.name];
-        vars[lams[term.name]].push(self);
+        if (is_global(term.name)) {
+          var self = term.self;
+        } else {
+          var self = Name.fresh();
+          var lamb = lams[term.name];
+          vars[lamb].push(self);
+        }
         return self;
     }
   }
+  find_global_lams(term);
+  find_global_vars(term);
   var lines = [];
   var init = go(term, {});
   lines.push("- root "+init+" root");
-  return lines.reverse().join("\n");
+  var inet = lines.reverse().join("\n");
+  return inet;
 };
 
 // Decompiles an interaction net back to a λ-term.
