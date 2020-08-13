@@ -44,38 +44,44 @@ function read(code) {
     indx++;
   }
   var defs = {};
-  function read_term() {
+  function read_term(vars) {
     skip_space();
     var head = code[indx++];
     switch (head) {
       case "(": // app
-        var term = read_term();
+        var term = read_term(vars);
         while (indx < code.length && !/^\s*\)/.test(code.slice(indx))) {
-          term = App(term, read_term());
+          term = App(term, read_term(vars));
         }
         var skip = read_char(")");
         return term;
       case "λ": // lam
         var name = read_name();
         var skip = read_char(".");
-        var body = read_term();
+        var body = read_term(vars.concat([name]));
         return Lam(name, body);
       case "@": // let
         var name = read_name();
-        var term = read_term();
-        var body = read_term();
+        var term = read_term(vars);
+        var body = read_term(vars.concat([name]));
         return App(Lam(name, body), term);
       case "$": // def
-        var name = read_name();
-        var term = read_term();
+        var name = read_name(vars);
+        var term = read_term(vars);
         defs[name] = term;
-        return read_term();
+        return read_term(vars);
       default:
         var name = head + read_name();
-        return defs[name] || Var(name);
+        if (vars.indexOf(name) !== -1) {
+          return Var(name);
+        } else if (defs[name]) {
+          return defs[name];
+        } else {
+          throw "Unbound variable: '"+name+"'.";
+        }
     }
   }
-  return read_term();
+  return read_term([]);
 };
 
 module.exports = {Var, Lam, App, show, read};

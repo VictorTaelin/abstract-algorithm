@@ -1,5 +1,6 @@
+var count = 0;
 function fresh() {
-  return rank((26 ** 7) + Math.random() * (26 ** 7));
+  return "$"+(++count);
 };
 
 function rank(num) {

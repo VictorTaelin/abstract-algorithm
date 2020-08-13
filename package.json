@@ -1,6 +1,6 @@
 {
   "name": "abstract-algorithm",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Optimal evaluation of some lambda terms",
   "main": "absal.js",
   "bin": {
