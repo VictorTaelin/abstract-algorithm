@@ -1,10 +1,12 @@
-#!/usr/bin/env node --stack_size=5000000
+#!/usr/bin/env -S node --stack-size=5000000
+//#!/usr/bin/env node --stack_size=5000000
 
 var fs = require("fs");
-var Absal = require("./absal.js");
+var Absal = require("./src/absal.js");
+var path = require("path");
 
-var file_name = process.argv[2];
-if (!file_name) {
+if (!process.argv[2] || process.argv[2] === "--help" || process.argv[2] === "-h") {
+  console.log("# Absal "+require("./package.json").version);
   console.log("Evaluates some λ-terms optimally.");
   console.log("\nUsage:");
   console.log("  absal <file_name>");
@@ -16,6 +18,8 @@ if (!file_name) {
   console.log("  absal \"(λf.λx.(f (f x)) λf.λx.(f (f x)))\"");
   process.exit();
 }
+
+var file_name = process.argv[2];
 
 if (fs.existsSync(file_name)) {
   var file = fs.readFileSync(file_name, "utf8");

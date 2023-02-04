@@ -1,4 +1,4 @@
-const Absal = require(".");
+const Absal = require("./src/absal");
 
 // Parses a λ-term
 var term = Absal.core.read(`
@@ -13,8 +13,8 @@ $mul λa. λb. λs. (a (b s))
 $exp λa. λb. (b a)
 
 // Powers of 2
-$p0 λs. λz. (s z)
-$p1 λs. λz. (s (s z))
+$p0 (suc zer) 
+$p1 (suc (suc zer))
 $p2 (mul p1 p1) // 2^2
 $p3 (mul p2 p1) // 2^3
 $p4 (mul p3 p1) // 2^4
@@ -30,7 +30,6 @@ $pD (mul pC p1) // 2^13
 $pE (mul pD p1) // 2^14
 $pF (mul pE p1) // 2^15
 $pG (mul pF p1) // 2^16
-
 // Bitstrings
 $e λe. λ0. λ1. e
 $0 λx. λe. λ0. λ1. (0 x)
@@ -46,7 +45,9 @@ $0k (0 (0 (0 (0 (0 (0 (0 (0 0s)))))))) // 24-bit 0
 $0u (0 (0 (0 (0 (0 (0 (0 (0 0k)))))))) // 32-bit 0
 
 // Main
-(id (pF INC 0s)) // 5k rewrites, vs 921k for the non-fusible inc
+// (id (pF INC 0s)) // 5k rewrites, vs 921k for the non-fusible inc
+(pA)
+//(pB) // Maximum call stack size exceeded
 `);
 
 // Compiles to interaction combinators net
@@ -84,4 +85,4 @@ function bits(func) {
   return func("")((p) => "0" + bits(p))((p) => "1" + bits(p));
 };
 
-console.log(bits(eval(tojs(term))));
+// console.log(bits(eval(tojs(term))));
