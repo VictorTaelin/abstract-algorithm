@@ -1,10 +1,10 @@
 {
   "name": "abstract-algorithm",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Optimal evaluation of some lambda terms",
-  "main": "absal.js",
+  "main": "./src/absal.js",
   "bin": {
-    "absal": "main.js"
+    "absal": "./main.js"
   },
   "repository": {
     "type": "git",
