@@ -18,9 +18,7 @@ if (!process.argv[2] || process.argv[2] === "--help" || process.argv[2] === "-h"
   console.log("  absal \"(λf.λx.(f (f x)) λf.λx.(f (f x)))\"");
   process.exit();
 }
-function is_file(name){
-  return name.slice(-5) === ".kind"
-}
+
 var file_name = process.argv[2];
 
 if (fs.existsSync(file_name)) {
